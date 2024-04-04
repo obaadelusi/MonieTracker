@@ -1,6 +1,5 @@
 package com.oba.monietracker.ui.screens
 
-import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -14,7 +13,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
@@ -28,15 +26,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.oba.monietracker.Destination
-import com.oba.monietracker.ui.activities.SignInActivity
+import com.oba.monietracker.R
 import com.oba.monietracker.ui.theme.Blue10
-import com.oba.monietracker.ui.theme.Crimson
 
 @Composable
 fun SettingsScreen(
@@ -95,13 +93,16 @@ fun SettingsScreen(
                 border = BorderStroke(1.dp, Color.LightGray),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Row(Modifier.fillMaxWidth().align(Alignment.CenterVertically)) {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.CenterVertically)) {
                     Icon(Icons.Default.Person, contentDescription = null,
-                        tint = Color.Gray,
+                        tint = colorResource(id = R.color.lime_green),
                         modifier = Modifier.align(Alignment.CenterVertically))
                     Text(
                         text = Destination.Account.title,
-                        color = Color.DarkGray,
+                        color = Color.Black,
                         fontSize = 18.sp,
                         textAlign = TextAlign.Start,
                         modifier = Modifier.padding(vertical = 16.dp, horizontal = 6.dp)
@@ -118,13 +119,16 @@ fun SettingsScreen(
                 border = BorderStroke(1.dp, Color.LightGray),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Row(Modifier.fillMaxWidth().align(Alignment.CenterVertically)) {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.CenterVertically)) {
                     Icon(Icons.Default.Add, contentDescription = null,
                         tint = Color.Gray,
                         modifier = Modifier.align(Alignment.CenterVertically))
                     Text(
                         text = "Add category",
-                        color = Color.DarkGray,
+                        color = Color.Black,
                         fontSize = 18.sp,
                         textAlign = TextAlign.Start,
                         modifier = Modifier.padding(vertical = 16.dp, horizontal = 6.dp)
@@ -133,7 +137,7 @@ fun SettingsScreen(
             }
 
             Button(
-                onClick = { navController.navigate(Destination.AddCategory.route)},
+                onClick = { navController.navigate(Destination.AddRecord.route)},
                 shape = RectangleShape,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.White
@@ -141,40 +145,42 @@ fun SettingsScreen(
                 border = BorderStroke(1.dp, Color.LightGray),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Row(Modifier.fillMaxWidth().align(Alignment.CenterVertically)) {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.CenterVertically)) {
+                    Icon(Icons.Default.Add, contentDescription = null,
+                        tint = Color.Gray,
+                        modifier = Modifier.align(Alignment.CenterVertically))
+                    Text(
+                        text = "Add record",
+                        color = Color.Black,
+                        fontSize = 18.sp,
+                        textAlign = TextAlign.Start,
+                        modifier = Modifier.padding(vertical = 16.dp, horizontal = 6.dp)
+                    )
+                }
+            }
+
+            Button(
+                onClick = { navController.navigate(Destination.Categories.route)},
+                shape = RectangleShape,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.White
+                ),
+                border = BorderStroke(1.dp, Color.LightGray),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.CenterVertically)) {
                     Icon(Icons.Default.Info, contentDescription = null,
                         tint = Color.Gray,
                         modifier = Modifier.align(Alignment.CenterVertically))
                     Text(
                         text = "View categories",
-                        color = Color.DarkGray,
-                        fontSize = 18.sp,
-                        textAlign = TextAlign.Start,
-                        modifier = Modifier.padding(vertical = 16.dp, horizontal = 6.dp)
-                    )
-                }
-            }
-
-            Button(
-                onClick = {
-                    val intent = Intent(context, SignInActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    context.startActivity(intent)
-                },
-                shape = RectangleShape,
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White
-                ),
-                border = BorderStroke(1.dp, Color.LightGray),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(Modifier.fillMaxWidth().align(Alignment.CenterVertically)) {
-                    Icon(Icons.Default.ExitToApp, contentDescription = null,
-                        tint = Crimson,
-                        modifier = Modifier.align(Alignment.CenterVertically))
-                    Text(
-                        text = "SIGN OUT",
-                        color = Crimson,
+                        color = Color.Black,
                         fontSize = 18.sp,
                         textAlign = TextAlign.Start,
                         modifier = Modifier.padding(vertical = 16.dp, horizontal = 6.dp)

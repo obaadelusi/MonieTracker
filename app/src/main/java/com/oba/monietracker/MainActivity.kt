@@ -32,6 +32,7 @@ import com.oba.monietracker.ui.components.BottomNavBar
 import com.oba.monietracker.ui.screens.AccountScreen
 import com.oba.monietracker.ui.screens.AddCategoryScreen
 import com.oba.monietracker.ui.screens.AddRecordScreen
+import com.oba.monietracker.ui.screens.CategoriesScreen
 import com.oba.monietracker.ui.screens.InsightsScreen
 import com.oba.monietracker.ui.screens.RecordsScreen
 import com.oba.monietracker.ui.screens.SettingsScreen
@@ -150,6 +151,10 @@ fun MainScaffold(
 
             composable(Destination.AddCategory.route){
                 AddCategoryScreen(navController = navHostController)
+            }
+
+            composable(Destination.Categories.route){
+                CategoriesScreen(navController = navHostController)
             }
 
             composable(Destination.Insights.route){
