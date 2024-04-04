@@ -20,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -28,23 +29,28 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.oba.monietracker.ui.components.BottomNavBar
+import com.oba.monietracker.ui.screens.AccountScreen
+import com.oba.monietracker.ui.screens.AddCategoryScreen
 import com.oba.monietracker.ui.screens.AddRecordScreen
-import com.oba.monietracker.ui.screens.DashboardScreen
 import com.oba.monietracker.ui.screens.InsightsScreen
 import com.oba.monietracker.ui.screens.RecordsScreen
 import com.oba.monietracker.ui.screens.SettingsScreen
 import com.oba.monietracker.ui.theme.MonieTrackerTheme
 
 sealed class Destination(val route: String, val title: String) {
-    data object Dashboard: Destination("dash", "Dashboard")
-
-    data object AddRecord: Destination("add-record", "Add Record")
-
     data object Records: Destination("records", "Records")
+
+    data object AddRecord: Destination("add-record", "Add record")
+
+    data object Categories: Destination("categories", "Categories")
+
+    data object AddCategory: Destination("add-category", "Add new category")
 
     data object Insights: Destination("insights", "Insights")
 
     data object Settings: Destination("settings", "Settings")
+
+    data object Account: Destination("account", "My Account")
 }
 
 class MainActivity : ComponentActivity() {
@@ -86,38 +92,46 @@ fun MainScaffold(
         floatingActionButton = {
             val navBackStackEntry by navHostController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route
-            if(currentRoute == Destination.AddRecord.route) {
-                FloatingActionButton(
-                    onClick = {
-                        /* TODO: Get receipt image from gallery */
-                    },
-                    content = {
-                        Row(verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(16.dp, 10.dp)) {
-                            Icon(painterResource(R.drawable.ic_camera), contentDescription = "Add Image")
-                            Text(text = "Image",
-                                modifier = Modifier.padding(start = 8.dp)
-                            )
-                        }
-                    })
-            } else if (currentRoute == Destination.Settings.route){
-                null
-            } else {
-                FloatingActionButton(
-                    onClick = {
-                        navHostController.navigate(Destination.AddRecord.route)
-                    },
-                    content = {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            modifier = Modifier.padding(16.dp, 10.dp)
-                        ) {
-                            Icon(Icons.Default.Add, contentDescription = "Add Record")
-                            Text(
-                                text = "Add Record",
-                            )
-                        }
-                    })
+            when (currentRoute) {
+                Destination.AddRecord.route -> {
+                    FloatingActionButton(
+                        onClick = {
+                            /* TODO: Get receipt image from gallery */
+                        },
+                        containerColor = colorResource(R.color.black),
+                        contentColor = colorResource(R.color.white),
+                        content = {
+                            Row(verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(16.dp, 10.dp)) {
+                                Icon(painterResource(R.drawable.ic_camera),
+                                    contentDescription = "Add Image")
+                                Text(text = "Upload Receipt",
+                                    modifier = Modifier.padding(start = 8.dp)
+                                )
+                            }
+                        })
+                }
+                Destination.Records.route, Destination.Insights.route -> {
+                    FloatingActionButton(
+                        onClick = {
+                            navHostController.navigate(Destination.AddRecord.route)
+                        },
+                        containerColor = colorResource(R.color.orange_red),
+                        contentColor = colorResource(R.color.white),
+                        content = {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                modifier = Modifier.padding(16.dp, 10.dp)
+                            ) {
+                                Icon(Icons.Default.Add, contentDescription = "Add Record")
+                                Text(
+                                    text = "Add Record",
+                                )
+                            }
+                        })
+
+                }
+                else -> { null }
             }
         }
     ){
@@ -126,16 +140,16 @@ fun MainScaffold(
             startDestination = Destination.Records.route,
             modifier = Modifier.padding(paddingValues))
         {
-            composable(Destination.Dashboard.route){
-                DashboardScreen(navController = navHostController)
+            composable(Destination.Records.route){
+                RecordsScreen(navController = navHostController)
             }
 
             composable(Destination.AddRecord.route){
                 AddRecordScreen(navController = navHostController)
             }
 
-            composable(Destination.Records.route){
-                RecordsScreen(navController = navHostController)
+            composable(Destination.AddCategory.route){
+                AddCategoryScreen(navController = navHostController)
             }
 
             composable(Destination.Insights.route){
@@ -144,6 +158,10 @@ fun MainScaffold(
 
             composable(Destination.Settings.route){
                 SettingsScreen(navController = navHostController)
+            }
+
+            composable(Destination.Account.route){
+                AccountScreen(navController = navHostController)
             }
         }
     }

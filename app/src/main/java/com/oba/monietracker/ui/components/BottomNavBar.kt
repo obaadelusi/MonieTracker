@@ -6,8 +6,10 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -44,6 +46,10 @@ fun BottomNavBar(navController: NavController){
             },
             label = { Text(text = Destination.Records.title) },
             selected = currentDestination?.route == Destination.Records.route,
+            colors = NavigationBarItemDefaults.colors(
+                indicatorColor = colorResource(R.color.dark_green),
+                selectedIconColor = colorResource(R.color.white)
+            ),
             onClick = {
                 navController.navigate(Destination.Records.route){
                     popUpTo(Destination.Records.route)
@@ -59,6 +65,10 @@ fun BottomNavBar(navController: NavController){
             },
             label = { Text(text = Destination.Insights.title) },
             selected = currentDestination?.route == Destination.Insights.route,
+            colors = NavigationBarItemDefaults.colors(
+                indicatorColor = colorResource(R.color.dark_green),
+                selectedIconColor = colorResource(R.color.white)
+            ),
             onClick = {
                 navController.navigate(Destination.Insights.route){
                     popUpTo(Destination.Insights.route)
@@ -74,6 +84,10 @@ fun BottomNavBar(navController: NavController){
             },
             label = { Text(text = Destination.Settings.title) },
             selected = currentDestination?.route == Destination.Settings.route,
+            colors = NavigationBarItemDefaults.colors(
+                indicatorColor = colorResource(R.color.dark_green),
+                selectedIconColor = colorResource(R.color.white)
+            ),
             onClick = {
                 navController.navigate(Destination.Settings.route){
                     popUpTo(Destination.Settings.route)

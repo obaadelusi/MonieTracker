@@ -1,6 +1,7 @@
 package com.oba.monietracker.ui.screens
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,6 +36,7 @@ import androidx.navigation.NavHostController
 import com.himanshoe.charty.common.toComposeList
 import com.himanshoe.charty.group.GroupedBarChart
 import com.himanshoe.charty.group.model.GroupBarData
+import com.oba.monietracker.ui.theme.Blue10
 import com.oba.monietracker.ui.theme.DarkSeaGreen
 import com.oba.monietracker.ui.theme.Salmon
 
@@ -86,6 +88,7 @@ fun InsightsScreen(navController: NavHostController)
         Box(
             Modifier
                 .fillMaxWidth()
+                .background(color = Blue10)
         ) {
             Text(
                 text = "Insights",

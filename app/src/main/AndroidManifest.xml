@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -21,13 +23,6 @@
 
         <activity
             android:name=".ui.activities.SignUpActivity"
-            android:exported="false"
-            android:label="Monie Tracker"
-            android:theme="@style/Theme.MonieTracker">
-        </activity>
-
-        <activity
-            android:name=".ui.activities.AddRecordActivity"
             android:exported="false"
             android:label="Monie Tracker"
             android:theme="@style/Theme.MonieTracker">

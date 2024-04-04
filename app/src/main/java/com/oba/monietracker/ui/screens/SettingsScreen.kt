@@ -15,6 +15,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ExitToApp
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -32,6 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.oba.monietracker.Destination
 import com.oba.monietracker.ui.activities.SignInActivity
 import com.oba.monietracker.ui.theme.Blue10
 import com.oba.monietracker.ui.theme.Crimson
@@ -42,6 +44,7 @@ fun SettingsScreen(
 ) {
     val context = LocalContext.current
     val state = rememberScrollState()
+
     Column(
         Modifier
             .verticalScroll(state)
@@ -84,7 +87,7 @@ fun SettingsScreen(
 
         Column {
             Button(
-                onClick = { },
+                onClick = { navController.navigate(Destination.Account.route) },
                 shape = RectangleShape,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.White
@@ -97,7 +100,7 @@ fun SettingsScreen(
                         tint = Color.Gray,
                         modifier = Modifier.align(Alignment.CenterVertically))
                     Text(
-                        text = "Your Account",
+                        text = Destination.Account.title,
                         color = Color.DarkGray,
                         fontSize = 18.sp,
                         textAlign = TextAlign.Start,
@@ -107,7 +110,7 @@ fun SettingsScreen(
             }
 
             Button(
-                onClick = { },
+                onClick = { navController.navigate(Destination.AddCategory.route)},
                 shape = RectangleShape,
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Color.White
@@ -120,7 +123,30 @@ fun SettingsScreen(
                         tint = Color.Gray,
                         modifier = Modifier.align(Alignment.CenterVertically))
                     Text(
-                        text = "Add Category",
+                        text = "Add category",
+                        color = Color.DarkGray,
+                        fontSize = 18.sp,
+                        textAlign = TextAlign.Start,
+                        modifier = Modifier.padding(vertical = 16.dp, horizontal = 6.dp)
+                    )
+                }
+            }
+
+            Button(
+                onClick = { navController.navigate(Destination.AddCategory.route)},
+                shape = RectangleShape,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color.White
+                ),
+                border = BorderStroke(1.dp, Color.LightGray),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(Modifier.fillMaxWidth().align(Alignment.CenterVertically)) {
+                    Icon(Icons.Default.Info, contentDescription = null,
+                        tint = Color.Gray,
+                        modifier = Modifier.align(Alignment.CenterVertically))
+                    Text(
+                        text = "View categories",
                         color = Color.DarkGray,
                         fontSize = 18.sp,
                         textAlign = TextAlign.Start,
