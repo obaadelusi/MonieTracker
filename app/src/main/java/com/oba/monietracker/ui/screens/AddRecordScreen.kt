@@ -194,7 +194,7 @@ fun AddRecordScreen(
                     IconButton(onClick = { dateOpenDialog = true }) {
                         Icon(
                             imageVector = Icons.Default.DateRange,
-                            contentDescription = "Select date"
+                            contentDescription = "icon calendar"
                         )
                     }
                 },

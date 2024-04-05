@@ -42,7 +42,7 @@ fun BottomNavBar(navController: NavController){
 
         NavigationBarItem(
             icon = {
-                Icon(Icons.Default.List, contentDescription = "transaction records")
+                Icon(Icons.Default.List, contentDescription = "icon list")
             },
             label = { Text(text = Destination.Records.title) },
             selected = currentDestination?.route == Destination.Records.route,
@@ -61,7 +61,7 @@ fun BottomNavBar(navController: NavController){
 
         NavigationBarItem(
             icon = {
-                Icon(ic_bar_graph, contentDescription = "insights")
+                Icon(ic_bar_graph, contentDescription = "icon graph")
             },
             label = { Text(text = Destination.Insights.title) },
             selected = currentDestination?.route == Destination.Insights.route,
@@ -80,7 +80,7 @@ fun BottomNavBar(navController: NavController){
 
         NavigationBarItem(
             icon = {
-                Icon(Icons.Default.Settings, contentDescription = "profile")
+                Icon(Icons.Default.Settings, contentDescription = "icon clog")
             },
             label = { Text(text = Destination.Settings.title) },
             selected = currentDestination?.route == Destination.Settings.route,
