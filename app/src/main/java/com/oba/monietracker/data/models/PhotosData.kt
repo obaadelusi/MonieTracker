@@ -4,6 +4,9 @@ package com.oba.monietracker.data.models
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
+/**
+ * The photos api results model.
+ */
 @JsonClass(generateAdapter = true)
 data class PhotosData(
     @Json(name = "results")

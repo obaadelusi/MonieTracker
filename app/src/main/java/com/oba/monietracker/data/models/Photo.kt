@@ -3,6 +3,9 @@ package com.oba.monietracker.data.models
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
+/**
+ * The photo model.
+ */
 @JsonClass(generateAdapter = true)
 data class Photo(
     @Json(name = "alt_description")
