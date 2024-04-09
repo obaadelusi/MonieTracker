@@ -40,9 +40,14 @@ import com.oba.monietracker.ui.theme.Blue10
 import com.oba.monietracker.ui.theme.DarkSeaGreen
 import com.oba.monietracker.ui.theme.Salmon
 
+/**
+ * The all insights content screen.
+ * @param navController The app navigation controller.
+ */
 @Composable
-fun InsightsScreen(navController: NavHostController)
-{
+fun InsightsScreen(
+    navController: NavHostController
+){
     val chartColors = listOf(
         DarkSeaGreen,
         Salmon

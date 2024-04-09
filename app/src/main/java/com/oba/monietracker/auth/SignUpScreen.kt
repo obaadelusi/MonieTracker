@@ -43,6 +43,10 @@ import androidx.compose.ui.unit.sp
 import com.oba.monietracker.MainActivity
 import com.oba.monietracker.ui.activities.SignInActivity
 
+/**
+ * The sign up screen.
+ * @param context The application context.
+ */
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SignUpScreen(
@@ -154,7 +158,7 @@ fun SignUpScreen(
         Button(
             onClick = {
                 // Perform Firebase authentication
-                performSignIn(email, password, context, keyboardController)
+                performSignUp(email, password, context, keyboardController)
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -186,8 +190,15 @@ fun SignUpScreen(
     }
 }
 
+/**
+ * Implements the FirebaseAuth sign up process.
+ * @param email The email of the user.
+ * @param password The password of the user.
+ * @param context The application context.
+ * @param keyboardController The keyboard control options.
+ */
 @OptIn(ExperimentalComposeUiApi::class)
-private fun performSignIn(
+private fun performSignUp(
     email: String,
     password: String,
     context: Context,

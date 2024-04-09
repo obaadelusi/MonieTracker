@@ -40,6 +40,10 @@ import com.oba.monietracker.ui.activities.SignInActivity
 import com.oba.monietracker.ui.theme.Blue10
 import com.oba.monietracker.ui.theme.Crimson
 
+/**
+ * The user account or profile detail screen.
+ * @param navController The app navigation controller.
+ */
 @Composable
 fun AccountScreen(
     navController: NavHostController

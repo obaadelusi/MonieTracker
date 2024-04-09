@@ -16,7 +16,9 @@ import androidx.navigation.NavController
 import com.oba.monietracker.Destination
 import com.oba.monietracker.R
 
-
+/**
+ * The app-wide bottom navigation bar component.
+ */
 @Composable
 fun BottomNavBar(navController: NavController){
     BottomAppBar(tonalElevation = 7.dp) {

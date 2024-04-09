@@ -9,6 +9,9 @@ import androidx.compose.ui.Modifier
 import com.oba.monietracker.auth.SignInScreen
 import com.oba.monietracker.ui.theme.MonieTrackerTheme
 
+/**
+ * The sign in activity page.
+ */
 class SignInActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

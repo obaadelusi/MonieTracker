@@ -45,6 +45,10 @@ import com.oba.monietracker.ui.components.PhotosDialog
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+/**
+ * The add new category form screen.
+ * @param navController The app navigation controller.
+ */
 @Composable
 fun AddCategoryScreen(
     navController: NavController
@@ -163,7 +167,8 @@ fun AddCategoryScreen(
 
                     )
                 ) {
-                    Text(text = "Click to add image from unsplash")
+                    Text(text = "Click to add image from unsplash",
+                        color = Color.DarkGray)
                 }
 
                 // dialog logic

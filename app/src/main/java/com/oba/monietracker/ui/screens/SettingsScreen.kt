@@ -36,6 +36,10 @@ import com.oba.monietracker.Destination
 import com.oba.monietracker.R
 import com.oba.monietracker.ui.theme.Blue10
 
+/**
+ * The all settings screen.
+ * @param navController The app navigation controller.
+ */
 @Composable
 fun SettingsScreen(
     navController: NavHostController
@@ -76,7 +80,6 @@ fun SettingsScreen(
                         "expense transaction data recorded by the user, and provides insights.",
                 color = Color.DarkGray,
                 style = MaterialTheme.typography.bodyLarge,
-                //fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(bottom = 8.dp)
             )
         }

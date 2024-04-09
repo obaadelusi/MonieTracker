@@ -5,6 +5,9 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 
+/**
+ * Initializes retrofit to create the photo service.
+ */
 object Api {
     private const val BASE_URL = "https://api.unsplash.com/"
 

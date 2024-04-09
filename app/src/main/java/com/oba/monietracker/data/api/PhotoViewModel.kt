@@ -12,6 +12,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+/**
+ * Implements the actual code of getting and converting data from the API.
+ */
 class PhotoViewModel(): ViewModel() {
 
     private val clientId: String = "u0K1UKic1vFMPLxqfcrSYAfbO6JJRF8l66tPhOcEq70"

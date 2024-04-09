@@ -7,6 +7,9 @@ import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
+/**
+ * Sets the structure of API queries.
+ */
 interface PhotoService {
     // for an api with query params: https://api.com/model?page=1
     @GET("photos/random")

@@ -21,9 +21,9 @@ import com.oba.monietracker.ui.components.CategoryCard
 import com.oba.monietracker.ui.theme.Blue10
 
 /**
- * Displays content of all categories.
+ * The all categories content screen.
  *
- * @param navController Stores app navigation data.
+ * @param navController The app navigation controller.
  */
 @Composable
 fun CategoriesScreen(

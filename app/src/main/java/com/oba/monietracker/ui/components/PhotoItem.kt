@@ -16,6 +16,10 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.oba.monietracker.data.models.Photo
 
+/**
+ * The photo item card component.
+ * @param item The photo data object.
+ */
 @Composable
 fun PhotoItem(item: Photo?) {
     Card(

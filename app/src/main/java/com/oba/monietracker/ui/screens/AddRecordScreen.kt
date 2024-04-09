@@ -62,7 +62,10 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
-
+/**
+ * The add new transaction record form screen.
+ * @param navController The app navigation controller.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddRecordScreen(

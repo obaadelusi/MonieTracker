@@ -36,6 +36,9 @@ import com.oba.monietracker.R
 import com.oba.monietracker.data.models.TransactionRecord
 import com.oba.monietracker.ui.components.RecordCard
 
+/**
+ * The all records content screen.
+ */
 @Composable
 fun RecordsScreen(
     navController: NavHostController
@@ -92,7 +95,9 @@ fun RecordsScreen(
                     }
                 },
                 shape = RectangleShape,
-                modifier = Modifier.width(150.dp).padding(end = 8.dp),
+                modifier = Modifier
+                    .width(150.dp)
+                    .padding(end = 8.dp),
             )
             OutlinedTextField(
                 value = "All",
@@ -117,5 +122,7 @@ fun RecordsScreen(
                 RecordCard(item)
             }
         }
+
+        Spacer(modifier = Modifier.height(120.dp))
     }
 }

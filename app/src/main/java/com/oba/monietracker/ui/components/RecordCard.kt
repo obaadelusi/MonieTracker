@@ -16,12 +16,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.oba.monietracker.R
 import com.oba.monietracker.data.models.TransactionRecord
 import com.oba.monietracker.ui.theme.DarkSeaGreen
 import com.oba.monietracker.ui.theme.Salmon
 
+/**
+ * The record item card component.
+ * @param item The transaction record.
+ */
 @Composable
 fun RecordCard(item: TransactionRecord) {
     Box(modifier = Modifier
@@ -30,7 +36,9 @@ fun RecordCard(item: TransactionRecord) {
         Column(modifier = Modifier.padding(12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(text = item.category,
-                    style = MaterialTheme.typography.titleLarge)
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Medium,
+                    color = Color.Black)
                 Spacer(modifier = Modifier.weight(1f))
                 Canvas(
                     modifier = Modifier
@@ -43,12 +51,12 @@ fun RecordCard(item: TransactionRecord) {
                 }
                 Text(text = item.type.uppercase(),
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Gray)
+                    color = Color.DarkGray)
             }
 
             Text(text = item.description,
                 style = MaterialTheme.typography.bodyLarge,
-                color = Color.Gray,
+                color = Color.DarkGray,
                 modifier = Modifier.padding(top = 4.dp))
 
             Spacer(modifier = Modifier.height(10.dp))
@@ -56,11 +64,13 @@ fun RecordCard(item: TransactionRecord) {
             Row(verticalAlignment = Alignment.Bottom) {
                 Text(text = item.date,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Gray)
+                    color = Color.DarkGray)
                 Spacer(modifier = Modifier.weight(1f))
                 Text(text = "$ ${item.amount}",
                     style = MaterialTheme.typography.headlineSmall,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
+                    color = if (item.type == "income") colorResource(R.color.dark_green)
+                                else colorResource(R.color.crimson)
                 )
             }
         }

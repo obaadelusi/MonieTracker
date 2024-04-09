@@ -1,5 +1,6 @@
 package com.oba.monietracker.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -13,13 +14,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.oba.monietracker.R
 import com.oba.monietracker.data.models.Photo
 
+/**
+ * A dialog to display photos related to a category name.
+ * @param catName The category name.
+ * @param photos The photos list to display.
+ * @param onDismissRequest The action on dialog dismiss.
+ */
 @Composable
 fun PhotosDialog(
     catName: String?,
@@ -31,7 +40,8 @@ fun PhotosDialog(
             shape = RoundedCornerShape(4.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(640.dp),
+                .height(640.dp)
+                .background(color = colorResource(R.color.blue_100)),
         ) {
             if(photos.isNotEmpty()) {
                 Text(
@@ -55,10 +65,10 @@ fun PhotosDialog(
                 Text(
                     text = "No image for \"$catName\" category on unsplash",
                     textAlign = TextAlign.Center,
-                    fontSize = 32.sp,
+                    fontSize = 28.sp,
                     lineHeight = 24.sp,
                     fontWeight = FontWeight.Normal,
-                    color = Color.Black,
+                    color = Color.DarkGray,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp, 16.dp)

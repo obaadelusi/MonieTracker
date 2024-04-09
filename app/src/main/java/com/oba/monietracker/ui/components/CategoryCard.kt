@@ -22,6 +22,10 @@ import coil.request.ImageRequest
 import com.oba.monietracker.R
 import com.oba.monietracker.data.models.Category
 
+/**
+ * The category item card component.
+ * @param item The category data object.
+ */
 @Composable
 fun CategoryCard(
     item: Category

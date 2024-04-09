@@ -40,6 +40,10 @@ import androidx.compose.ui.unit.sp
 import com.oba.monietracker.MainActivity
 import com.oba.monietracker.ui.activities.SignUpActivity
 
+/**
+ * The sign in screen.
+ * @param context The application context.
+ */
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SignInScreen(
@@ -136,6 +140,13 @@ fun SignInScreen(
     }
 }
 
+/**
+ * Implements the FirebaseAuth sign in process.
+ * @param email The email of the user.
+ * @param password The password of the user.
+ * @param context The application context.
+ * @param keyboardController The keyboard control options.
+ */
 @OptIn(ExperimentalComposeUiApi::class)
 private fun performSignIn(
     email: String,
