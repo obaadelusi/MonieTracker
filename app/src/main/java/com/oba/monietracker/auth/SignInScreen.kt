@@ -1,6 +1,7 @@
 package com.oba.monietracker.auth
 
 
+// import com.google.firebase.auth.FirebaseAuth
 import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,9 +29,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
@@ -36,8 +41,8 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-// import com.google.firebase.auth.FirebaseAuth
 import com.oba.monietracker.MainActivity
+import com.oba.monietracker.R
 import com.oba.monietracker.ui.activities.SignUpActivity
 
 /**
@@ -47,12 +52,14 @@ import com.oba.monietracker.ui.activities.SignUpActivity
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SignInScreen(
-    context: Context
+    context: Context,
+    canAuthenticate: () -> Boolean,
+    authenticateUser: () -> Unit
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var loading by remember { mutableStateOf(false) }
-    var error by remember { mutableStateOf<String?>(null) }
+    val error by remember { mutableStateOf<String?>(null) }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Column(
@@ -77,6 +84,17 @@ fun SignInScreen(
                 .align(Alignment.CenterHorizontally),
             style = MaterialTheme.typography.headlineLarge)
 
+        //if(canAuthenticate()) {
+            OutlinedButton(onClick = {
+                // check if mobile supports biometric sign in
+                authenticateUser()
+            }) {
+                Text(text = "BIOMETRIC SIGN IN")
+                Icon(painterResource(R.drawable.ic_baseline_fingerprint), null)
+            }
+            Text(text = "-- OR --", Modifier.padding(vertical = 12.dp))
+        ///}
+
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
@@ -84,7 +102,8 @@ fun SignInScreen(
                 .fillMaxWidth()
                 .padding(8.dp),
             label = { Text("Email") },
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email)
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Next)
         )
 
         OutlinedTextField(
@@ -95,7 +114,8 @@ fun SignInScreen(
                 .padding(8.dp),
             label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password)
+            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Password,
+                imeAction = ImeAction.Done)
         )
 
         if (error != null) {
@@ -180,3 +200,4 @@ private fun performSignIn(
 //            keyboardController?.hide()
 //        }
 }
+
