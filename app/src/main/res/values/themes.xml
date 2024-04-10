@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.MonieTracker" parent="android:Theme.Material.Light.LightStatusBar" />
+    <style name="Theme.MonieTracker" parent="Theme.AppCompat.DayNight.DarkActionBar" />
 </resources>

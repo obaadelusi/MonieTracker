@@ -1,28 +1,39 @@
 package com.oba.monietracker.ui.activities
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
-import android.os.CancellationSignal
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
+import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
 import androidx.biometric.BiometricPrompt
+import androidx.biometric.BiometricPrompt.PromptInfo
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.core.content.ContextCompat
+import com.oba.monietracker.MainActivity
 import com.oba.monietracker.auth.SignInScreen
 import com.oba.monietracker.ui.theme.MonieTrackerTheme
 import java.util.concurrent.Executor
 
+
 /**
  * The sign in activity page.
  */
-class SignInActivity : ComponentActivity() {
+@SuppressLint("RestrictedApi")
+class SignInActivity : AppCompatActivity() {
     private lateinit var executor: Executor
+    private lateinit var promptInfo: PromptInfo
     private lateinit var biometricPrompt : BiometricPrompt
-    private lateinit var promptInfo: BiometricPrompt.PromptInfo
 
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -32,18 +43,20 @@ class SignInActivity : ComponentActivity() {
                     //color = MaterialTheme.colorScheme.background
                 ) {
                     val context = applicationContext
-                    val biometricManager = BiometricManager.from(context)
+                    val biometricManager = BiometricManager.from(this)
 
-                    SignInScreen(context = context, canAuthenticate = {
-                        when (biometricManager
-                            .canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG or
-                                    BiometricManager.Authenticators.DEVICE_CREDENTIAL)) {
-                            BiometricManager.BIOMETRIC_SUCCESS -> true
-                            else -> false
+                    SignInScreen(context = context,
+                        canAuthenticate = {
+                            when (biometricManager.canAuthenticate(
+                                    BIOMETRIC_STRONG or DEVICE_CREDENTIAL
+                                )) {
+                                BiometricManager.BIOMETRIC_SUCCESS -> true
+                                else -> false
+                            }
+                        }, authenticateUser = {
+                            authenticateUser(context)
                         }
-                    }, authenticateUser = {
-                        authenticateUser(context)
-                    })
+                    )
                 }
             }
         }
@@ -57,11 +70,10 @@ class SignInActivity : ComponentActivity() {
     private fun authenticateUser(
         context: Context
     ) {
-//        executor = ContextCompat.getMainExecutor(this)
+        executor = ContextCompat.getMainExecutor(this)
+//        executor = context.mainExecutor
 
-        executor = context.mainExecutor
-
-        val callback = object : android.hardware.biometrics.BiometricPrompt.AuthenticationCallback() {
+        val callback = object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationError(errorCode: Int,
                                                errString: CharSequence) {
                 super.onAuthenticationError(errorCode, errString)
@@ -71,11 +83,14 @@ class SignInActivity : ComponentActivity() {
             }
 
             override fun onAuthenticationSucceeded(
-                result: android.hardware.biometrics.BiometricPrompt.AuthenticationResult) {
+                result: BiometricPrompt.AuthenticationResult) {
                 super.onAuthenticationSucceeded(result)
                 Toast.makeText(applicationContext,
                     "Authentication succeeded!", Toast.LENGTH_SHORT)
                     .show()
+                val intent = Intent(context, MainActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(intent)
             }
 
             override fun onAuthenticationFailed() {
@@ -87,31 +102,29 @@ class SignInActivity : ComponentActivity() {
         }
 
 
-        val bioPrompt = android.hardware.biometrics.BiometricPrompt.Builder(context)
-            .setTitle("Biometric login for my app")
-            .setSubtitle("Log in using your biometric credential")
-            .setNegativeButton("Use account password",
-                executor) { _, _ ->
-                    // Handle cancel action here
-                    // For example: close the authentication dialog
-
-                }
-            .build()
-
-        bioPrompt.authenticate(
-            CancellationSignal(), executor, callback
-        )
-
-
-        //val frag = Fragment(R.layout.custom_dialog)
-        //biometricPrompt = BiometricPrompt(frag,mainExecutor, callback)
-
-//        promptInfo = BiometricPrompt.PromptInfo.Builder()
-//            .setTitle("Biometric login for my app")
+//        val bioPrompt = android.hardware.biometrics.BiometricPrompt.Builder(context)
+//            .setTitle("Biometric login")
 //            .setSubtitle("Log in using your biometric credential")
-//            .setNegativeButtonText("Use account password")
+//            .setNegativeButton("Use email instead",
+//                executor) { _, _ ->
+//                    // Handle cancel action here
+//                    // For example: close the authentication dialog
+//
+//                }
 //            .build()
 //
-//        biometricPrompt.authenticate(promptInfo)
+//        bioPrompt.authenticate(
+//            CancellationSignal(), executor, callback
+//        )
+
+        biometricPrompt = BiometricPrompt(this, executor, callback)
+
+        promptInfo = PromptInfo.Builder()
+            .setTitle("Biometric login for my app")
+            .setSubtitle("Log in using your biometric credential")
+            .setNegativeButtonText("Use email instead")
+            .build()
+
+        biometricPrompt.authenticate(promptInfo)
     }
 }

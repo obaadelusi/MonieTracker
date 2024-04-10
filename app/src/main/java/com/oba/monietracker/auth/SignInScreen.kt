@@ -84,16 +84,16 @@ fun SignInScreen(
                 .align(Alignment.CenterHorizontally),
             style = MaterialTheme.typography.headlineLarge)
 
-        //if(canAuthenticate()) {
-            OutlinedButton(onClick = {
+        if(canAuthenticate()) {
+            Button(onClick = {
                 // check if mobile supports biometric sign in
                 authenticateUser()
             }) {
-                Text(text = "BIOMETRIC SIGN IN")
+                Text(text = "BIOMETRIC SIGN IN", Modifier.padding(end = 12.dp))
                 Icon(painterResource(R.drawable.ic_baseline_fingerprint), null)
             }
             Text(text = "-- OR --", Modifier.padding(vertical = 12.dp))
-        ///}
+        }
 
         OutlinedTextField(
             value = email,
@@ -126,7 +126,7 @@ fun SignInScreen(
             )
         }
 
-        Button(
+        OutlinedButton(
             onClick = {
                 // Perform Firebase authentication
                 performSignIn(email, password, context, keyboardController)
