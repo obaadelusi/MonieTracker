@@ -1,5 +1,6 @@
 package com.oba.monietracker
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -28,6 +29,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.oba.monietracker.data.db.AppDataManager
+import com.oba.monietracker.data.db.AppDatabase
 import com.oba.monietracker.ui.components.BottomNavBar
 import com.oba.monietracker.ui.screens.AccountScreen
 import com.oba.monietracker.ui.screens.AddCategoryScreen
@@ -40,21 +43,16 @@ import com.oba.monietracker.ui.theme.MonieTrackerTheme
 
 sealed class Destination(val route: String, val title: String) {
     data object Records: Destination("records", "Records")
-
     data object AddRecord: Destination("add-record", "Add record")
-
     data object Categories: Destination("categories", "Categories")
-
     data object AddCategory: Destination("add-category", "Add new category")
-
     data object Insights: Destination("insights", "Insights")
-
     data object Settings: Destination("settings", "Settings")
-
     data object Account: Destination("account", "My Account")
 }
 
 class MainActivity : ComponentActivity() {
+    @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -70,9 +68,13 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     val context = LocalContext.current
 
+                    val database = AppDatabase.getInstance(context)
+                    val appDataManager = AppDataManager(database)
+
                     MainScaffold(
                         navController,
-                        context
+                        context,
+                        appDataManager
                         //, fs_db
                     )
                 }
@@ -84,7 +86,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScaffold(
     navHostController: NavHostController,
-    context: Context
+    context: Context,
+    appDataManager: AppDataManager
 ) {
     Scaffold(
         bottomBar = {
@@ -142,31 +145,31 @@ fun MainScaffold(
             modifier = Modifier.padding(paddingValues))
         {
             composable(Destination.Records.route){
-                RecordsScreen(navController = navHostController)
+                RecordsScreen(navHostController, appDataManager)
             }
 
             composable(Destination.AddRecord.route){
-                AddRecordScreen(navController = navHostController)
+                AddRecordScreen(navHostController, appDataManager)
             }
 
             composable(Destination.AddCategory.route){
-                AddCategoryScreen(navController = navHostController)
+                AddCategoryScreen(navHostController, appDataManager)
             }
 
             composable(Destination.Categories.route){
-                CategoriesScreen(navController = navHostController)
+                CategoriesScreen(navHostController, appDataManager)
             }
 
             composable(Destination.Insights.route){
-                InsightsScreen(navController = navHostController)
+                InsightsScreen(navHostController, appDataManager)
             }
 
             composable(Destination.Settings.route){
-                SettingsScreen(navController = navHostController)
+                SettingsScreen(navHostController)
             }
 
             composable(Destination.Account.route){
-                AccountScreen(navController = navHostController)
+                AccountScreen(navHostController)
             }
         }
     }

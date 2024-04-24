@@ -18,7 +18,7 @@ import retrofit2.Response
 class PhotoViewModel(): ViewModel() {
 
     private val clientId: String = "u0K1UKic1vFMPLxqfcrSYAfbO6JJRF8l66tPhOcEq70"
-    private val photosCount = 12
+    private val photosCount = 14
 
     private var _photosResponse = mutableStateOf<List<Photo>>(emptyList())
     val photosResponse: MutableState<List<Photo>>
@@ -30,7 +30,7 @@ class PhotoViewModel(): ViewModel() {
 
     //private fun getPhotosBySearchQuery(database: AppDatabase) {
     suspend fun getPhotosBySearchQuery(query: String) {
-        val service = Api.photoRetrofitService.getPhotosBySearchQuery(clientId, query)
+        val service = Api.photoRetrofitService.getPhotosBySearchQuery(clientId, query, photosCount)
 
         service.enqueue(object : Callback<PhotosData> {
             override fun onResponse(
@@ -59,24 +59,24 @@ class PhotoViewModel(): ViewModel() {
 
     // get single photo from API
     suspend fun getSinglePhoto(photoId: String) {
-    val service = Api.photoRetrofitService.getSinglePhoto(clientId, photoId)
+        val service = Api.photoRetrofitService.getSinglePhoto(clientId, photoId)
 
-    service.enqueue(object : Callback<Photo> {
-        override fun onResponse(
-            call: Call<Photo>,
-            response: Response<Photo>
-        )
-        {
-            if (response.isSuccessful) {
-                Log.i("GetOnePhoto-VM", response.body().toString())
-                _singlePhotoResponse.value = response.body()?: Photo()
-                //Log.i("DataStream", _singlePhotoResponse.toString())
+        service.enqueue(object : Callback<Photo> {
+            override fun onResponse(
+                call: Call<Photo>,
+                response: Response<Photo>
+            )
+            {
+                if (response.isSuccessful) {
+                    Log.i("GetOnePhoto-VM", response.body().toString())
+                    _singlePhotoResponse.value = response.body()?: Photo()
+                    //Log.i("DataStream", _singlePhotoResponse.toString())
+                }
             }
-        }
 
-        override fun onFailure(call: Call<Photo>, t: Throwable) {
-            Log.d("Err-GetOnePhoto-VM", "${t.message}")
-        }
-    })
-}
+            override fun onFailure(call: Call<Photo>, t: Throwable) {
+                Log.d("Err-GetOnePhoto-VM", "${t.message}")
+            }
+        })
+    }
 }

@@ -1,6 +1,7 @@
 package com.oba.monietracker.ui.components
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
@@ -21,11 +22,15 @@ import com.oba.monietracker.data.models.Photo
  * @param item The photo data object.
  */
 @Composable
-fun PhotoItem(item: Photo?) {
+fun PhotoItem(
+    item: Photo?,
+    onImageClick: (imageId: String?, imageUrl: String?) -> Unit
+) {
     Card(
         Modifier.padding(8.dp, 6.dp)
-            .border(width = 1.dp, color = Color.Gray),
-        shape = RectangleShape
+            .border(width = 1.dp, color = Color.Gray)
+            .clickable { onImageClick(item?.id, item?.urls?.regular) },
+        shape = RectangleShape,
     ) {
         AsyncImage(
             model = ImageRequest.Builder(

@@ -101,26 +101,10 @@ class SignInActivity : AppCompatActivity() {
             }
         }
 
-
-//        val bioPrompt = android.hardware.biometrics.BiometricPrompt.Builder(context)
-//            .setTitle("Biometric login")
-//            .setSubtitle("Log in using your biometric credential")
-//            .setNegativeButton("Use email instead",
-//                executor) { _, _ ->
-//                    // Handle cancel action here
-//                    // For example: close the authentication dialog
-//
-//                }
-//            .build()
-//
-//        bioPrompt.authenticate(
-//            CancellationSignal(), executor, callback
-//        )
-
         biometricPrompt = BiometricPrompt(this, executor, callback)
 
         promptInfo = PromptInfo.Builder()
-            .setTitle("Biometric login for my app")
+            .setTitle("Biometric login")
             .setSubtitle("Log in using your biometric credential")
             .setNegativeButtonText("Use email instead")
             .build()

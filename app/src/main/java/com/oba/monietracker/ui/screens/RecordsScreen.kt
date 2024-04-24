@@ -1,5 +1,6 @@
 package com.oba.monietracker.ui.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,18 +14,25 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DisplayMode
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -33,34 +41,43 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.oba.monietracker.R
+import com.oba.monietracker.data.db.AppDataManager
 import com.oba.monietracker.data.models.TransactionRecord
 import com.oba.monietracker.ui.components.RecordCard
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 /**
  * The all records content screen.
+ * @param navController The navigation controller.
+ * @param appDataManager The app database manager.
  */
+@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun RecordsScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    appDataManager: AppDataManager
 ) {
-    val records = listOf(
-        TransactionRecord("1 Mar 2024", 650.00f,
-            "expense", "Rent & Utilities - Princess St", "Housing"),
-        TransactionRecord("3 Mar 2024", 125.92f,
-            "expense", "Gift - Mom", "Giving"),
-        TransactionRecord("15 Mar 2024", 1130.39f,
-            "income", "Pay - CargoJet (Part-time)", "Job Pay"),
-        TransactionRecord("16 Mar 2024", 230.52f,
-            "expense", "Groceries - Walmart", "Groceries"),
-        TransactionRecord("24 Mar 2024", 1444.60f,
-            "income", "Tax return - CRA", "Tax Return"),
-        TransactionRecord("26 Mar 2024", 14.55f,
-            "expense", "Subscription - YT Premium", "Entertainment"),
-    )
 
-    val date_options = listOf("Apr 2024", "Mar 2024", "Feb 2024", "Jan 2024")
-    var date_expanded by remember { mutableStateOf(false) }
-    var date_selectedOption by remember { mutableStateOf("Mar 2024") }
+    var records by remember { mutableStateOf<List<TransactionRecord>>(emptyList()) }
+
+    val datePickerState = rememberDatePickerState(
+        initialSelectedDateMillis = Instant.now().toEpochMilli(),
+        initialDisplayMode = DisplayMode.Picker)
+    var dateOpenDialog by remember { mutableStateOf(false) }
+    val dateFormatter = DateTimeFormatter
+        .ofPattern("MMM yyyy", Locale.getDefault())
+    val selectedDate = datePickerState.selectedDateMillis?.let {//
+        dateFormatter.format(
+            Instant.ofEpochMilli(it).atOffset(ZoneOffset.UTC)
+            //Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
+        )
+    }
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -82,15 +99,15 @@ fun RecordsScreen(
         Row(modifier = Modifier.padding(8.dp)) {
             Spacer(modifier = Modifier.weight(1f))
             OutlinedTextField(
-                value = date_selectedOption,
-                onValueChange = { date_selectedOption = it },
+                value = selectedDate ?: "No date",
+                onValueChange = {  },
                 readOnly = true,
                 singleLine = true,
                 trailingIcon = {
-                    IconButton(onClick = { /* TODO: Handle icon click */ }) {
+                    IconButton(onClick = { dateOpenDialog = true }) {
                         Icon(
                             imageVector = Icons.Default.DateRange,
-                            contentDescription = "View more dates"
+                            contentDescription = "select a month"
                         )
                     }
                 },
@@ -99,22 +116,59 @@ fun RecordsScreen(
                     .width(150.dp)
                     .padding(end = 8.dp),
             )
-            OutlinedTextField(
-                value = "All",
-                onValueChange = {},
-                singleLine = true,
-                readOnly = true,
-                shape = RectangleShape,
-                trailingIcon = {
-                    IconButton(onClick = { /* Handle icon click */ }) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowDropDown,
-                            contentDescription = "View more record types"
-                        )
+            if (dateOpenDialog) {
+                DatePickerDialog(
+                    onDismissRequest = { dateOpenDialog = false },
+                    confirmButton = {
+                        TextButton(onClick = { dateOpenDialog = false }) {
+                            Text(text = "OK")
+                        }
+                        GlobalScope.launch {
+                            records = appDataManager.getTransactionsByDate("$selectedDate")
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { dateOpenDialog = false }) {
+                            Text(text = "CANCEL")
+                        }
                     }
-                },
-                modifier = Modifier.width(90.dp)
-            )
+                ) {
+                    DatePicker(state = datePickerState)
+                }
+            }
+
+//            OutlinedTextField(
+//                value = "All",
+//                onValueChange = {},
+//                singleLine = true,
+//                readOnly = true,
+//                shape = RectangleShape,
+//                trailingIcon = {
+//                    IconButton(onClick = { /* Handle icon click */ }) {
+//                        Icon(
+//                            imageVector = Icons.Default.ArrowDropDown,
+//                            contentDescription = "View more record types"
+//                        )
+//                    }
+//                },
+//                modifier = Modifier.width(90.dp)
+//            )
+        }
+
+        // TODO: Get all the records for date
+        LaunchedEffect(Unit) {
+            records = appDataManager.getTransactionsByDate(selectedDate!!)
+//            records = appDataManager.getAllTransactionRecords()
+        }
+
+        if(records.isEmpty()) {
+            Row (
+                modifier = Modifier.weight(1f)
+                    .padding(top = 120.dp)
+                    .align(Alignment.CenterHorizontally)
+            ){
+                Text(text = "No transactions recorded for $selectedDate")
+            }
         }
 
         LazyColumn {
@@ -123,6 +177,8 @@ fun RecordsScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(120.dp))
+        Spacer(modifier = Modifier
+            .weight(1f)
+            .height(120.dp))
     }
 }

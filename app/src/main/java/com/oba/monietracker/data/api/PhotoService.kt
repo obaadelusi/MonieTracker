@@ -28,6 +28,8 @@ interface PhotoService {
     fun getPhotosBySearchQuery(
         @Query(value = "client_id") clientId:String,
         @Query(value = "query", encoded = true) query:String,
+        @Query(value = "per_page") perPage:Int,
+        @Query(value = "page") page:Int = 1,
         @Query(value = "orientation") orientation:String = "landscape"
     ) : Call<PhotosData>
 }

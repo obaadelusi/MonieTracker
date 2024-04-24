@@ -1,6 +1,7 @@
 package com.oba.monietracker.ui.components
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.BottomAppBar
@@ -27,21 +28,6 @@ fun BottomNavBar(navController: NavController){
 
         val ic_bar_graph = painterResource(id = R.drawable.ic_bar_graph)
 
-//        NavigationBarItem(
-//            icon = {
-//                Icon(Icons.Default.Home, contentDescription = "dashboard")
-//            },
-//            label = { Text(text = Destination.Dashboard.title) },
-//            selected = currentDestination?.route == Destination.Dashboard.route,
-//            onClick = {
-//                navController.navigate(Destination.Dashboard.route){
-//                    popUpTo(Destination.Dashboard.route) {inclusive= true}
-//                    launchSingleTop = true
-//                }
-//            }
-//
-//        )
-
         NavigationBarItem(
             icon = {
                 Icon(Icons.Default.List, contentDescription = "icon list")
@@ -55,11 +41,10 @@ fun BottomNavBar(navController: NavController){
             onClick = {
                 navController.navigate(Destination.Records.route){
                     popUpTo(Destination.Records.route)
-                    launchSingleTop = true
+                    launchSingleTop = false
                 }
             },
-
-            )
+        )
 
         NavigationBarItem(
             icon = {
@@ -74,11 +59,28 @@ fun BottomNavBar(navController: NavController){
             onClick = {
                 navController.navigate(Destination.Insights.route){
                     popUpTo(Destination.Insights.route)
-                    launchSingleTop = true
+                    launchSingleTop = false
                 }
             },
+        )
 
-            )
+        NavigationBarItem(
+            icon = {
+                Icon(Icons.Default.AddCircle, contentDescription = "icon add")
+            },
+            label = { Text(text = Destination.AddRecord.title) },
+            selected = currentDestination?.route == Destination.AddRecord.route,
+            colors = NavigationBarItemDefaults.colors(
+                indicatorColor = colorResource(R.color.dark_green),
+                selectedIconColor = colorResource(R.color.white)
+            ),
+            onClick = {
+                navController.navigate(Destination.AddRecord.route){
+                    popUpTo(Destination.Records.route)
+                    launchSingleTop = false
+                }
+            },
+        )
 
         NavigationBarItem(
             icon = {
@@ -93,7 +95,7 @@ fun BottomNavBar(navController: NavController){
             onClick = {
                 navController.navigate(Destination.Settings.route){
                     popUpTo(Destination.Settings.route)
-                    launchSingleTop = true
+                    launchSingleTop = false
                 }
             },
 

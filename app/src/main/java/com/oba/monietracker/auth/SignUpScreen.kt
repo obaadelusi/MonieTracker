@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -41,6 +42,7 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.oba.monietracker.MainActivity
+import com.oba.monietracker.R
 import com.oba.monietracker.ui.activities.SignInActivity
 
 /**
@@ -62,26 +64,33 @@ fun SignUpScreen(
 
     Column(
         modifier = Modifier
-            //.background(color = Color(R.color.wheat))
             .fillMaxSize(1f)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Top
+        verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "Logo",
-            Modifier
-                .padding(bottom = 30.dp)
-                .align(Alignment.CenterHorizontally),
-            fontWeight = FontWeight.Bold,
-            fontSize = TextUnit(10f, TextUnitType.Em),
-            color = Color.LightGray
-        )
+        Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+            Text(
+                text = "Monie",
+                Modifier.padding(bottom = 24.dp),
+                fontWeight = FontWeight.Bold,
+                fontSize = TextUnit(10f, TextUnitType.Em),
+                color = Color.Black,
+            )
+            Text(
+                text = "Tracker",
+                Modifier.padding(bottom = 24.dp),
+                fontWeight = FontWeight.Bold,
+                fontSize = TextUnit(10f, TextUnitType.Em),
+                color = colorResource(R.color.green)
+            )
+        }
 
-        Text(text = "Create an account",
+        Text(text = "Create Your Account",
             Modifier
                 .padding(bottom = 16.dp)
-                .align(Alignment.Start),
-            style = MaterialTheme.typography.headlineSmall)
+                .align(Alignment.CenterHorizontally),
+            style = MaterialTheme.typography.headlineLarge)
 
         OutlinedTextField(
             value = name,

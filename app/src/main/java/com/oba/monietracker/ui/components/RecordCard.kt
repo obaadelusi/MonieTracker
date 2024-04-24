@@ -35,10 +35,14 @@ fun RecordCard(item: TransactionRecord) {
         .border(1.dp, Color.Gray, shape = RectangleShape)) {
         Column(modifier = Modifier.padding(12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = item.category,
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Medium,
-                    color = Color.Black)
+
+                item.category?.name?.let {
+                    Text(text = it,
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = FontWeight.Medium,
+                        color = Color.Black)
+                }
+
                 Spacer(modifier = Modifier.weight(1f))
                 Canvas(
                     modifier = Modifier
@@ -62,11 +66,11 @@ fun RecordCard(item: TransactionRecord) {
             Spacer(modifier = Modifier.height(10.dp))
 
             Row(verticalAlignment = Alignment.Bottom) {
-                Text(text = item.date,
+                Text(text = item.transactionDate,
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color.DarkGray)
                 Spacer(modifier = Modifier.weight(1f))
-                Text(text = "$ ${item.amount}",
+                Text(text = String.format("$ %.2f", item.amount),
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Medium,
                     color = if (item.type == "income") colorResource(R.color.dark_green)

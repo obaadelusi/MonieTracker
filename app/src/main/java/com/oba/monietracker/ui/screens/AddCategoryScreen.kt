@@ -1,6 +1,7 @@
 package com.oba.monietracker.ui.screens
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -27,9 +28,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -38,9 +42,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.oba.monietracker.Destination
 import com.oba.monietracker.R
 import com.oba.monietracker.data.api.PhotoViewModel
+import com.oba.monietracker.data.db.AppDataManager
+import com.oba.monietracker.data.models.Category
 import com.oba.monietracker.ui.components.PhotosDialog
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -51,16 +59,20 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun AddCategoryScreen(
-    navController: NavController
+    navController: NavController,
+    appDataManager: AppDataManager
 ){
     var name by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
+    var newCatImageUrl by remember { mutableStateOf("") }
 
     var showNameError by remember { mutableStateOf(false) }
+    var showImageError by remember { mutableStateOf(false) }
 
     var openPhotosDialog by remember { mutableStateOf(false) }
 
     val viewModel: PhotoViewModel = viewModel()
+    val context = LocalContext.current
 
     Log.d("PhotoVM", viewModel.photosResponse.value.toString())
 
@@ -109,7 +121,8 @@ fun AddCategoryScreen(
                 )
             )
             if(showNameError) {
-                Text(text = "Enter a category name", color = Color.Red, fontSize = 13.sp)
+                Text(text = "Enter a category name",
+                    color = Color.Red, fontSize = 13.sp)
             }
         }
 
@@ -149,26 +162,38 @@ fun AddCategoryScreen(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(82.dp)
+                    .height(120.dp)
                     .border(1.dp, Color.Gray, shape = RectangleShape)
             ){
-                Button(
-                    onClick = {
-                        if (name.isBlank()) showNameError = true
-                            else openPhotosDialog = true
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(),
-                    shape = RectangleShape,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color.White,
-                        contentColor = Color.Gray
-
+                if (newCatImageUrl.isNotBlank()) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(
+                            LocalContext.current
+                        ).data(newCatImageUrl)
+                            .build(),
+                        contentDescription = null,
+                        contentScale = ContentScale.FillWidth,
+                        alignment = Alignment.Center
                     )
-                ) {
-                    Text(text = "Click to add image from unsplash",
-                        color = Color.DarkGray)
+                } else {
+                    Button(
+                        onClick = {
+                            if (name.isBlank()) showNameError = true
+                                else openPhotosDialog = true
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(),
+                        shape = RectangleShape,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.White,
+                            contentColor = Color.Gray
+
+                        )
+                    ) {
+                        Text(text = "Click to add image from unsplash",
+                            color = Color.DarkGray)
+                    }
                 }
 
                 // dialog logic
@@ -181,18 +206,40 @@ fun AddCategoryScreen(
                     }
                     PhotosDialog(
                         catName = name,
-                        photos = viewModel.photosResponse.value
-                    ) {
+                        photos = viewModel.photosResponse.value,
+                        onDismissRequest = { openPhotosDialog = false }
+                    ) { imageId, imageUrl ->
+                        Toast
+                            .makeText(context, "image selected", Toast.LENGTH_SHORT)
+                            .show()
+                        newCatImageUrl = imageUrl!!
                         openPhotosDialog = false
+
+                        val newCategory = Category(
+                            name = name,
+                            description = description,
+                            imageId = imageId
+                        )
+
+                        GlobalScope.launch {
+                            appDataManager.saveCategory(newCategory)
+                        }
                     }
                 }
+            }
+            if(showImageError) {
+                Text(
+                    text = "Add an image to this category",
+                    color = Color.Red,
+                    fontSize = 13.sp)
             }
         }
 
         Button(
             onClick = {
                 if (name.isBlank()) showNameError = true
-                    else navController.navigate(Destination.Records.route)
+                    else if (newCatImageUrl.isBlank()) showImageError = true
+                    else navController.navigate(Destination.Categories.route)
             },
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(R.color.dark_slate_blue)

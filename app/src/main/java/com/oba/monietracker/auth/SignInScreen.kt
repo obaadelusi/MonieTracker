@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.SoftwareKeyboardController
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -69,14 +70,22 @@ fun SignInScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "Logo",
-            Modifier
-                .padding(bottom = 30.dp)
-                .align(Alignment.CenterHorizontally),
-            fontWeight = FontWeight.Bold,
-            fontSize = TextUnit(10f, TextUnitType.Em),
-            color = Color.LightGray
-        )
+        Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
+            Text(
+                text = "Monie",
+                modifier = Modifier.padding(bottom = 24.dp),
+                fontWeight = FontWeight.Bold,
+                fontSize = TextUnit(10f, TextUnitType.Em),
+                color = Color.Black,
+            )
+            Text(
+                text = "Tracker",
+                modifier = Modifier.padding(bottom = 24.dp),
+                fontWeight = FontWeight.Bold,
+                fontSize = TextUnit(10f, TextUnitType.Em),
+                color = colorResource(R.color.green)
+            )
+        }
 
         Text(text = "Sign In",
             Modifier

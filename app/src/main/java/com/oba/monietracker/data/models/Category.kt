@@ -1,13 +1,17 @@
 package com.oba.monietracker.data.models
 
-import java.util.Date
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 /**
  * The transaction category model.
  */
+@Entity(tableName = "tbl_categories")
 data class Category(
-    val name: String,
-    val description: String?,
-    val image: String?,
-    val dateCreated: Date = Date()
+    var name: String? = null,
+    var description: String? = null,
+    var imageId: String? = null,
+    @PrimaryKey(autoGenerate = true)
+    var id: Long? = null,
+    var createdAt: Long? = System.currentTimeMillis(),
 )

@@ -11,11 +11,17 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.oba.monietracker.data.db.AppDataManager
 import com.oba.monietracker.data.models.Category
 import com.oba.monietracker.ui.components.CategoryCard
 import com.oba.monietracker.ui.theme.Blue10
@@ -27,17 +33,9 @@ import com.oba.monietracker.ui.theme.Blue10
  */
 @Composable
 fun CategoriesScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    appDataManager: AppDataManager
 ) {
-    // This data will come from database - Room DB.
-    val categories = listOf(
-        Category("Income - Job", "Income from full- part-time jobs", "lCPhGxs7pww"),
-        Category("Income - Business", "Income from side businesses", "6dW3xyQvcYE"),
-        Category("Housing", "Rent, utilities and home maintenance", "r3WAWU5Fi5Q"),
-        Category("Groceries", "Food, fruits, snacks and everything nice.", "ivfp_yxZuYQ"),
-    )
-
-
     Column(Modifier.fillMaxSize()) {
         Box(
             Modifier
@@ -51,6 +49,17 @@ fun CategoriesScreen(
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(vertical = 20.dp, horizontal = 12.dp)
             )
+        }
+
+        // TODO: Get all the records
+        var categories by remember { mutableStateOf<List<Category>>(emptyList()) }
+        LaunchedEffect(Unit) {
+            categories = appDataManager.getAllCategories()
+        }
+
+        if(categories.isEmpty()) {
+            Text(text = "Loading transaction categories...",
+                modifier = Modifier.padding(24.dp, 6.dp))
         }
 
         LazyColumn {

@@ -21,6 +21,9 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.oba.monietracker.R
 import com.oba.monietracker.data.models.Category
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 /**
  * The category item card component.
@@ -30,7 +33,7 @@ import com.oba.monietracker.data.models.Category
 fun CategoryCard(
     item: Category
 ) {
-    val url = "https://source.unsplash.com/${item.image}"
+    val url = "https://source.unsplash.com/${item.imageId}"
     Card(
         shape = RectangleShape,
         colors = CardDefaults.cardColors(
@@ -54,11 +57,13 @@ fun CategoryCard(
             )
         }
 
-        Text(text = item.name,
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 8.dp, top = 8.dp, bottom = 4.dp))
+        item.name?.let {
+            Text(text = it,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 8.dp, top = 8.dp, bottom = 4.dp))
+        }
 
         item.description?.let {
             Text(text = it,
@@ -68,10 +73,19 @@ fun CategoryCard(
                     .padding(start = 8.dp, bottom = 8.dp))
         }
 
-        Text(text = item.dateCreated.toString(),
+        Text(text = dateToString(item.createdAt!!),
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 8.dp, bottom = 8.dp))
     }
+
+}
+
+
+fun dateToString(milliseconds: Long): String {
+    val dateFormat = SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault())
+    val calendar = Calendar.getInstance()
+    calendar.timeInMillis = milliseconds
+    return dateFormat.format(calendar.time)
 }

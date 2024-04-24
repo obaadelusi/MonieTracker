@@ -1,16 +1,19 @@
 package com.oba.monietracker.data.models
 
-import java.util.Date
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 /**
  * The transaction record model.
  */
+@Entity(tableName = "tbl_transactionRecords")
 data class TransactionRecord(
-    val date: String,
-    val amount: Float,
+    val transactionDate: String,
+    val amount: Double,
     val type: String,
     val description: String,
-    val category: String,
-    val transactionMethod: String = "credit",
-    val createdAt: Date = Date()
+    var category: Category?,
+    @PrimaryKey(autoGenerate = true)
+    val id: Long? = null,
+    val createdAt: Long = System.currentTimeMillis()
 )

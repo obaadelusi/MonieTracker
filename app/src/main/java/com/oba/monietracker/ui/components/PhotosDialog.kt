@@ -28,12 +28,14 @@ import com.oba.monietracker.data.models.Photo
  * @param catName The category name.
  * @param photos The photos list to display.
  * @param onDismissRequest The action on dialog dismiss.
+ * @param onImageClick The action on image click.
  */
 @Composable
 fun PhotosDialog(
     catName: String?,
     photos: List<Photo?>,
-    onDismissRequest: () -> Unit
+    onDismissRequest: () -> Unit,
+    onImageClick: (imageId: String?, imageUrl: String?) -> Unit
 ) {
     Dialog(onDismissRequest = { onDismissRequest() }) {
         Card(
@@ -58,17 +60,19 @@ fun PhotosDialog(
                 LazyColumn(
                 ) {
                     items(photos) { item ->
-                        PhotoItem(item)
+                        PhotoItem(item) { id, url ->
+                            onImageClick(id, url)
+                        }
                     }
                 }
             } else {
                 Text(
-                    text = "No image for \"$catName\" category on unsplash",
+                    text = "Searching for \"$catName\" image on unsplash",
                     textAlign = TextAlign.Center,
-                    fontSize = 28.sp,
+                    fontSize = 24.sp,
                     lineHeight = 24.sp,
                     fontWeight = FontWeight.Normal,
-                    color = Color.DarkGray,
+                    color = Color.Magenta,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp, 16.dp)

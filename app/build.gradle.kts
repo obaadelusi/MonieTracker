@@ -1,6 +1,9 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
+
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -50,35 +53,79 @@ android {
 }
 
 dependencies {
-    // charts library app
-    implementation("com.himanshoe:charty:2.0.0-alpha01")
+    val nav_version = "2.5.2"
+    val coil_version = "2.1.0"
+    val lifecycle_version = "2.5.1"
+    val retrofit_version = "2.9.0"
+    val hilt_version = "2.43.2"
+    val room_version = "2.4.2"
+    val compose_ui_version = "1.5.4"
 
-    // imports for apis
-//    val coil_version = "2.1.0"
-//    val lifecycle_version = "2.5.1"
-//    val retrofit_version = "2.9.0"
-//    val hilt_version = "2.43.2"
-//    val room_version = "2.4.2"
+    // gson for converting object to json
+    implementation("com.google.code.gson:gson:2.10.1")
 
-    implementation(libs.coil.compose)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation("androidx.navigation:navigation-compose:$nav_version")
+    // compose
+    implementation("androidx.compose.ui:ui-tooling-preview:$compose_ui_version")
+//    implementation("androidx.compose.material:material:1.6.2")
+
+    implementation("io.coil-kt:coil-compose:$coil_version")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version")
 
     // retro fit
-    implementation (libs.retrofit)
-    implementation (libs.converter.gson)
+    implementation ("com.squareup.retrofit2:retrofit:$retrofit_version")
+    implementation ("com.squareup.retrofit2:converter-gson:$retrofit_version")
 
     // room
-//    implementation("androidx.room:room-runtime:$room_version")
+    implementation("androidx.room:room-runtime:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
+    implementation("androidx.room:room-ktx:$room_version")
+
+    // hilt dagger
+    implementation ("com.google.dagger:hilt-android:$hilt_version")
+    kapt ("com.google.dagger:hilt-compiler:$hilt_version")
+
+    //moshi
+    implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
+    implementation("com.squareup.retrofit2:converter-moshi:$retrofit_version")
+
+    // month picker dialog
+    //implementation(libs.monthpickerdialog)
+
+
+//    // compose
+//    implementation(libs.coil.compose)
+//    implementation(libs.androidx.lifecycle.viewmodel.compose)
+//    implementation(libs.ui.tooling.preview)
+//
+//    // gson for converting object to json
+//    implementation(libs.gson)
+//
+//    // retro fit
+//    implementation (libs.retrofit)
+//    implementation (libs.converter.gson)
+//
+//    // room
+//    val room_version = "2.6.1"
+//
+//    implementation(libs.androidx.room.runtime)
+//    implementation(libs.androidx.room.ktx)
+//
+//    // To use Kotlin annotation processing tool (kapt)
 //    kapt("androidx.room:room-compiler:$room_version")
-//    implementation("androidx.room:room-ktx:$room_version")
-
-    //hilt dagger
+//
+//    // implementation("androidx.room:room-runtime:$room_version")
+//    // kapt("androidx.room:room-compiler:$room_version")
+//    // implementation("androidx.room:room-ktx:$room_version")
+//
+//    // hilt dagger
+//    val hilt_version = "2.43.2"
 //    implementation ("com.google.dagger:hilt-android:$hilt_version")
-//    kapt ("com.google.dagger:hilt-compiler:$hilt_version")
-
-    // moshi
-    implementation(libs.moshi.kotlin)
-    implementation(libs.converter.moshi)
+//    annotationProcessor ("com.google.dagger:hilt-compiler:$hilt_version")
+//
+//    // moshi
+//    implementation(libs.moshi.kotlin)
+//    implementation(libs.converter.moshi)
 
     // default libraries
     implementation(libs.androidx.core.ktx)
@@ -99,7 +146,11 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    // biometric manager
+    //--> biometric manager
     implementation(libs.androidx.biometric)
     implementation(libs.androidx.appcompat.resources)
+
+    //--> charts library
+    implementation(libs.charty)
+
 }

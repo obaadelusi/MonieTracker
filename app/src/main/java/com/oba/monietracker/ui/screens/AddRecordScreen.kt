@@ -36,6 +36,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -44,7 +45,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -57,22 +57,29 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.oba.monietracker.Destination
 import com.oba.monietracker.R
+import com.oba.monietracker.data.db.AppDataManager
+import com.oba.monietracker.data.models.Category
+import com.oba.monietracker.data.models.TransactionRecord
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import java.util.Locale
 
 /**
  * The add new transaction record form screen.
  * @param navController The app navigation controller.
+ * @param appDataManager The app data manager.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddRecordScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    appDataManager: AppDataManager
 ) {
-    val type_options = listOf("Expense", "Income")
-    val type_selectedOption = remember { mutableStateOf("Expense") }
+    var typeSelected by remember { mutableStateOf("expense") }
 
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = Instant.now().toEpochMilli())
@@ -81,21 +88,28 @@ fun AddRecordScreen(
         Instant.ofEpochMilli(it).atOffset(ZoneOffset.UTC)
     }
 
-//    var expanded by remember { mutableStateOf(false) }
-//    var selectedOption by remember { mutableStateOf(options.firstOrNull()) }
+    var categories by remember { mutableStateOf<List<Category>>(emptyList()) }
+    var catOptions by remember { mutableStateOf<List<String>>(emptyList()) }
+    var catSelectedOption by remember { mutableStateOf<String?>("Uncategorized") }
+    var catExpanded by remember { mutableStateOf(false) }
 
-    val cat_options = listOf("Groceries",
-        "Income - Job",
-        "Income - Business",
-        "Income - Other")
-    var cat_expanded by remember { mutableStateOf(false) }
-    var cat_selectedOption by remember { mutableStateOf(cat_options.firstOrNull()) }
-    //var cat_searchText by remember { mutableStateOf("") }
+    LaunchedEffect(Unit) {
+        categories = appDataManager.getAllCategories()
+        val cats = mutableListOf<String>()
+        categories.forEach { c ->
+            cats.add("${c.name}")
+        }
+        catOptions = cats.sorted()
+        //catSelectedOption = catOptions.firstOrNull()
+    }
 
     var amount by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
 
-    val context = LocalContext.current
+    var showAmountError by remember { mutableStateOf(false) }
+    var showDescError by remember { mutableStateOf(false) }
+
+//    val context = LocalContext.current
 
     Column(
         Modifier
@@ -126,56 +140,21 @@ fun AddRecordScreen(
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
-                    selected = type_selectedOption.value == "Expense",
+                    selected = typeSelected == "expense",
                     modifier = Modifier.padding(0.dp),
-                    onClick = { type_selectedOption.value = "Expense" }
+                    onClick = { typeSelected = "expense" }
                 )
                 Text("Expense", fontSize = 16.sp, color = Color.Black)
                 
-                Spacer(modifier = Modifier.width(20.dp))
+                Spacer(modifier = Modifier.width(24.dp))
 
                 RadioButton(
-                    selected = type_selectedOption.value == "Income",
+                    selected = typeSelected == "income",
                     modifier = Modifier.padding(0.dp),
-                    onClick = { type_selectedOption.value = "Income" }
+                    onClick = { typeSelected = "income" }
                 )
                 Text("Income", fontSize = 16.sp, color = Color.Black)
             }
-
-//            ExposedDropdownMenuBox(
-//                expanded = expanded,
-//                modifier = Modifier.fillMaxWidth(),
-//                onExpandedChange = {
-//                    expanded = !expanded
-//                }
-//            ) {
-//                OutlinedTextField(
-//                    value = selectedOption!!,
-//                    onValueChange = {},
-//                    readOnly = true,
-//                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .menuAnchor()
-//                )
-//
-//                ExposedDropdownMenu(
-//                    expanded = expanded,
-//                    onDismissRequest = { expanded = false },
-//                    modifier = Modifier.fillMaxWidth()
-//                ) {
-//                    options.forEach { item ->
-//                        DropdownMenuItem(
-//                            text = { Text(text = item) },
-//                            onClick = {
-//                                selectedOption = item
-//                                expanded = false
-//                                Toast.makeText(context, item, Toast.LENGTH_SHORT).show()
-//                            }
-//                        )
-//                    }
-//                }
-//            }
         }
 
         // Date
@@ -236,7 +215,10 @@ fun AddRecordScreen(
 
             OutlinedTextField(
                 value = amount,
-                onValueChange = { amount = it},
+                onValueChange = {
+                    amount = it
+                    showAmountError = false
+                },
                 trailingIcon = { Icons.Default.Edit },
                 shape = RectangleShape,
                 modifier = Modifier.fillMaxWidth(),
@@ -245,6 +227,10 @@ fun AddRecordScreen(
                     imeAction = ImeAction.Next
                 )
             )
+            if(showAmountError) {
+                Text(text = "Enter an amount",
+                    color = Color.Red, fontSize = 13.sp)
+            }
         }
 
         // Category
@@ -271,20 +257,20 @@ fun AddRecordScreen(
             }
 
             ExposedDropdownMenuBox(
-                expanded = cat_expanded,
+                expanded = catExpanded,
                 onExpandedChange = {
-                    cat_expanded = !cat_expanded
+                    catExpanded = !catExpanded
                 },
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentSize(Alignment.TopStart)
             ) {
                 OutlinedTextField(
-                    value = cat_selectedOption ?: "",
+                    value = catSelectedOption ?: "",
                     onValueChange = { },
                     readOnly = true,
                     trailingIcon = {
-                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = cat_expanded) },
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = catExpanded) },
                     shape = RectangleShape,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -296,20 +282,20 @@ fun AddRecordScreen(
                 )
 
                 ExposedDropdownMenu(
-                    expanded = cat_expanded,
-                    onDismissRequest = { cat_expanded = false },
+                    expanded = catExpanded,
+                    onDismissRequest = { catExpanded = false },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)
                 ) {
-                    cat_options.forEach { cat_option ->
+                    catOptions.forEach { cat_option ->
                         Log.i("AddScreen-option", cat_option)
                         DropdownMenuItem(text = {
                             Text(text = cat_option)
                         }, onClick = {
-                            cat_selectedOption = cat_option
+                            catSelectedOption = cat_option
                             //onValueChange(option)
-                            cat_expanded = false
+                            catExpanded = false
                         },
                             modifier = Modifier.fillMaxWidth())
                     }
@@ -328,7 +314,10 @@ fun AddRecordScreen(
 
             OutlinedTextField(
                 value = description,
-                onValueChange = { description = it},
+                onValueChange = {
+                    description = it
+                    showDescError = false
+                },
                 trailingIcon = { Icons.Default.Edit },
                 shape = RectangleShape,
                 modifier = Modifier
@@ -339,11 +328,35 @@ fun AddRecordScreen(
                     imeAction = ImeAction.Next
                 )
             )
+            if(showDescError) {
+                Text(text = "Enter a description",
+                    color = Color.Red, fontSize = 13.sp)
+            }
         }
         
         // Save Button
         Button(
-            onClick = { navController.navigate(Destination.Records.route) },
+            onClick = {
+                if (amount.isBlank()) {
+                    showAmountError = true
+                } else if(description.isBlank()) {
+                    showDescError = true
+                }
+                else {
+                    val tDate = DateTimeFormatter
+                        .ofPattern("dd MMM yyyy", Locale.getDefault())
+                        .format(selectedDate)
+                    val t = TransactionRecord(
+                        tDate,
+                        amount.toDouble(),
+                        typeSelected,
+                        description,
+                        Category(catSelectedOption)
+                    )
+                    GlobalScope.launch { appDataManager.saveTransaction(t) }
+                    navController.navigate(Destination.Records.route)
+                }
+            },
             colors = ButtonDefaults.buttonColors(
                 containerColor = colorResource(R.color.dark_green)
             ),
