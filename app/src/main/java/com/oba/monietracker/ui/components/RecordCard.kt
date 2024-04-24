@@ -2,6 +2,7 @@ package com.oba.monietracker.ui.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,10 +30,15 @@ import com.oba.monietracker.ui.theme.Salmon
  * @param item The transaction record.
  */
 @Composable
-fun RecordCard(item: TransactionRecord) {
+fun RecordCard(
+    item: TransactionRecord,
+    onClick: (id: Int) -> Unit
+) {
     Box(modifier = Modifier
         .padding(all = 8.dp)
-        .border(1.dp, Color.Gray, shape = RectangleShape)) {
+        .border(1.dp, Color.Gray, shape = RectangleShape).
+        clickable { onClick(item.id!!.toInt()) }
+    ) {
         Column(modifier = Modifier.padding(12.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
 

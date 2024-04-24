@@ -29,7 +29,6 @@ class AppDataManager(private val database: AppDatabase) {
                 }
                 tranJob.join()
             }
-
         }
     }
 
@@ -50,10 +49,6 @@ class AppDataManager(private val database: AppDatabase) {
         Category(name = "Entertainment",
             "Fun outings, subscriptions, and games.", "5cAMGyNGHYg"),
     )
-
-//    private var _categories = mutableStateOf<List<Category?>>(emptyList())
-//    val categories: MutableState<List<Category?>>
-//        @Composable get() = remember { _categories }
 
     /**
      * Get local categories and save to the database.
@@ -148,7 +143,7 @@ class AppDataManager(private val database: AppDatabase) {
     }
 
     /**
-     * Gets all transaction by specified date.
+     * Gets all transactions for specified date.
      * @param date The specified date.
      * @return List of transaction records.
      */
@@ -162,6 +157,28 @@ class AppDataManager(private val database: AppDatabase) {
         job.join()
 
         return transactions
+    }
+
+    /**
+     * Gets a transaction by specified id.
+     * @param id The specified id.
+     * @return List of transaction records.
+     */
+    fun getTransactionById(id: String): TransactionRecord {
+        val newId = "$id".toInt()
+        val t = database.transactionRecordDao().getTransactionRecordById(newId)
+
+//        Log.i("Mgr-GetRecordById", "One Record -> $t")
+        return t
+    }
+
+    /**
+     * Delete a transaction record from the database.
+     */
+    fun deleteTransaction(transaction: TransactionRecord) {
+        val t = database.transactionRecordDao().deleteTransactionRecord(transaction)
+
+        Log.i("Mgr-GetRecordById", "One Record -> $t")
     }
 
     /**
@@ -182,6 +199,14 @@ class AppDataManager(private val database: AppDatabase) {
         transaction.category = dbCat
 
         database.transactionRecordDao().insertOneTransactionRecord(transaction)
+    }
+
+    /***
+     * Updates a transaction.
+     * @param transaction The transaction.
+     */
+    suspend fun updateTransaction(transaction: TransactionRecord) {
+        database.transactionRecordDao().updateTransactionRecord(transaction)
     }
 
     // Dao implementations

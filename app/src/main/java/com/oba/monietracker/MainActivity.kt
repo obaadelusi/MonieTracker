@@ -43,6 +43,7 @@ import com.oba.monietracker.ui.theme.MonieTrackerTheme
 
 sealed class Destination(val route: String, val title: String) {
     data object Records: Destination("records", "Records")
+    data object ShowRecord: Destination("record", "A Record")
     data object AddRecord: Destination("add-record", "Add record")
     data object Categories: Destination("categories", "Categories")
     data object AddCategory: Destination("add-category", "Add new category")
@@ -146,6 +147,10 @@ fun MainScaffold(
         {
             composable(Destination.Records.route){
                 RecordsScreen(navHostController, appDataManager)
+            }
+
+            composable(Destination.ShowRecord.route){
+//                ShowRecordScreen(navHostController)
             }
 
             composable(Destination.AddRecord.route){

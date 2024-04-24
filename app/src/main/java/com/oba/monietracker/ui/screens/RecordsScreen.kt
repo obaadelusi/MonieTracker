@@ -36,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -44,6 +45,7 @@ import com.oba.monietracker.R
 import com.oba.monietracker.data.db.AppDataManager
 import com.oba.monietracker.data.models.TransactionRecord
 import com.oba.monietracker.ui.components.RecordCard
+import com.oba.monietracker.ui.components.RecordDialog
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.time.Instant
@@ -64,7 +66,12 @@ fun RecordsScreen(
     appDataManager: AppDataManager
 ) {
 
+    val context = LocalContext.current
+
     var records by remember { mutableStateOf<List<TransactionRecord>>(emptyList()) }
+
+    var openRecordDialog by remember { mutableStateOf(false) }
+    var selectedRecordIndex by remember { mutableStateOf(0) }
 
     val datePickerState = rememberDatePickerState(
         initialSelectedDateMillis = Instant.now().toEpochMilli(),
@@ -173,8 +180,21 @@ fun RecordsScreen(
 
         LazyColumn {
             items(records) { item ->
-                RecordCard(item)
+                RecordCard(item) {
+                    openRecordDialog = true
+                    selectedRecordIndex = it
+                }
             }
+        }
+
+        // dialog logic
+        if (openRecordDialog) {
+            RecordDialog(
+                t = records.find { it.id?.toInt() == selectedRecordIndex }!!,
+                appDataManager,
+                navController,
+                onDismissRequest = { openRecordDialog = false }
+            )
         }
 
         Spacer(modifier = Modifier
