@@ -79,7 +79,7 @@ fun RecordsScreen(
     var dateOpenDialog by remember { mutableStateOf(false) }
     val dateFormatter = DateTimeFormatter
         .ofPattern("MMM yyyy", Locale.getDefault())
-    val selectedDate = datePickerState.selectedDateMillis?.let {//
+    val selectedDate = datePickerState.selectedDateMillis?.let {
         dateFormatter.format(
             Instant.ofEpochMilli(it).atOffset(ZoneOffset.UTC)
             //Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()

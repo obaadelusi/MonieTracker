@@ -1,6 +1,7 @@
 package com.oba.monietracker.ui.screens
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -62,6 +63,7 @@ import java.util.Locale
 /**
  * The all insights content screen.
  * @param navController The app navigation controller.
+ * @param appDataManager The app data manager.
  */
 //@SuppressLint("CoroutineCreationDuringComposition")
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -82,51 +84,12 @@ fun InsightsScreen(
     var dateOpenDialog by remember { mutableStateOf(false) }
     val dateFormatter = DateTimeFormatter
         .ofPattern("MMM yyyy", Locale.getDefault())
-    val selectedDate = datePickerState.selectedDateMillis?.let {//
+    val selectedDate = datePickerState.selectedDateMillis?.let {
         dateFormatter.format(
             Instant.ofEpochMilli(it).atOffset(ZoneOffset.UTC)
             //Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
         )
     }
-
-    val year = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy"))
-    val months = listOf (
-        "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-    )
-
-
-    val chartColors = listOf(
-        DarkSeaGreen,
-        Salmon
-    )
-
-    val groupData = listOf(
-        GroupBarData(
-            label = "Nov 2023",
-            dataPoints = listOf(3000f, 1800f),
-            chartColors
-        ),
-        GroupBarData(
-            label = "Dec 2023",
-            dataPoints = listOf(2300f, 3150f),
-            chartColors
-        ),
-        GroupBarData(
-            label = "Jan 2024",
-            dataPoints = listOf(2800f, 2900f),
-            chartColors
-        ),
-        GroupBarData(
-            label = "Feb 2024",
-            dataPoints = listOf(3400f, 2200f),
-            chartColors
-        ),
-        GroupBarData(
-            label = "Mar 2024",
-            dataPoints = listOf(3700f, 1950f),
-            chartColors
-        ),
-    )
 
     /**
      * Get all transactions for a specified month.
@@ -216,7 +179,6 @@ fun InsightsScreen(
             LaunchedEffect(Unit) {
                 getTransactionsByDate(selectedDate)
             }
-//                GlobalScope.launch{  }
         }
 
         Box(modifier = Modifier
@@ -307,6 +269,102 @@ fun InsightsScreen(
             }
         }
 
+        // Chart
+
+        /* TODO: To display data with grouped bar chart
+         *  1. Data -> date: String [MMM yyyy], dataPoints: listOf(f, f)
+         *  2. Get current date, query the records. Save in variable
+         *  3. Get previous month, query the records. Save in variable
+         *  4. Display
+         */
+        var prevMonth1Records by remember { mutableStateOf<List<TransactionRecord>>(emptyList()) }
+        var prevMonth1IncomeTotal by remember { mutableFloatStateOf(0.0f) }
+        var prevMonth1ExpenseTotal by remember { mutableFloatStateOf(0.0f) }
+
+        var prevMonth2Records by remember { mutableStateOf<List<TransactionRecord>>(emptyList()) }
+        var prevMonth2IncomeTotal by remember { mutableFloatStateOf(0.0f) }
+        var prevMonth2ExpenseTotal by remember { mutableFloatStateOf(0.0f) }
+
+        // use current month to get previous month
+        val year = LocalDate.now()
+            .format(DateTimeFormatter.ofPattern("yyyy")).toInt()
+        val months = listOf (
+            "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+        )
+        val thisMonth = selectedDate?.split(" ")?.first()
+        Log.d("Screen", "This month: $thisMonth")
+
+        var prevMonth1 by remember { mutableStateOf("") }
+        var prevMonth2 by remember { mutableStateOf("") }
+        for(index in months.indices) {
+            Log.d("Screen", "Element at index: " + months.elementAt(index))
+            if (index > 1 && months.elementAt(index) == thisMonth) {
+                prevMonth1 = months.elementAt(index-1) + " $year"
+                prevMonth2 = months.elementAt(index-2) + " $year"
+
+                Log.d("Screen", "Element at index-1: " + months.elementAt(index-1))
+                break
+            } else if (index == 1 && months.elementAt(index) == thisMonth) {
+                prevMonth1 = "Jan $year"
+                prevMonth2 = "Dec ${year-1}"
+                break
+            }
+            else if (index == 0 && months.elementAt(index) == thisMonth){
+                prevMonth1 = "Dec ${year-1}"
+                prevMonth2 = "Nov ${year-1}"
+                break
+            }
+        }
+
+        LaunchedEffect(Unit) {
+            prevMonth1Records = appDataManager.getTransactionsByDate(prevMonth1)
+            prevMonth1IncomeTotal = 0.0f
+            prevMonth1ExpenseTotal = 0.0f
+            prevMonth1Records.forEach { r ->
+                if (r.type.lowercase() == "income") {
+                    prevMonth1IncomeTotal += r.amount.toFloat()
+                } else if(r.type.lowercase() == "expense") {
+                    prevMonth1ExpenseTotal += r.amount.toFloat()
+                }
+            }
+
+            prevMonth2Records = appDataManager.getTransactionsByDate(prevMonth2)
+            prevMonth2IncomeTotal = 0.0f
+            prevMonth2ExpenseTotal = 0.0f
+            prevMonth2Records.forEach { r ->
+                if (r.type.lowercase() == "income") {
+                    prevMonth2IncomeTotal += r.amount.toFloat()
+                } else if(r.type.lowercase() == "expense") {
+                    prevMonth2ExpenseTotal += r.amount.toFloat()
+                }
+            }
+
+        }
+
+
+        val chartColors = listOf(
+            DarkSeaGreen,
+            Salmon
+        )
+
+        val groupData = listOf(
+            GroupBarData(
+                label = prevMonth2,
+                dataPoints = listOf(prevMonth2IncomeTotal, prevMonth2ExpenseTotal),
+                chartColors
+            ),
+            GroupBarData(
+                label = prevMonth1,
+                dataPoints = listOf(prevMonth1IncomeTotal, prevMonth1ExpenseTotal),
+                chartColors
+            ),
+            GroupBarData(
+                label = "$selectedDate",
+                dataPoints = listOf(incomeTotal, expenseTotal),
+                chartColors
+            ),
+        )
+
         Box(
             modifier = Modifier
                 .padding(6.dp)
@@ -361,7 +419,10 @@ fun InsightsScreen(
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
+
                 Spacer(modifier = Modifier.height(60.dp))
+
+                Text("Bar Chart", style = MaterialTheme.typography.headlineLarge)
             }
         }
     }

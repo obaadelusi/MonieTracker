@@ -8,7 +8,7 @@ import kotlinx.coroutines.launch
 
 /**
  * The App database manager.
- * @param database The database to manage.
+ * @param database The database.
  */
 class AppDataManager(private val database: AppDatabase) {
     init {
@@ -20,12 +20,12 @@ class AppDataManager(private val database: AppDatabase) {
                 database.categoryDao().deleteAllCategories()
 
                 val catJob = GlobalScope.launch {
-                    storeInitCategories(database)
+                    storeInitCategories()
                 }
                 catJob.join()
 
                 val tranJob = GlobalScope.launch {
-                    storeInitTransactions(database)
+                    storeInitTransactions()
                 }
                 tranJob.join()
             }
@@ -54,10 +54,10 @@ class AppDataManager(private val database: AppDatabase) {
      * Get local categories and save to the database.
      * @param database The database.
      */
-    private suspend fun storeInitCategories(database: AppDatabase) {
+    private suspend fun storeInitCategories() {
         // save data in the local db
         val job = GlobalScope.launch {
-            saveCategoriesToDatabase(database = database, _categories)
+            saveCategoriesToDatabase(_categories)
         }
         job.join()
         Log.i("Mgr-StoreCategories", "Done -> $_categories")
@@ -67,7 +67,7 @@ class AppDataManager(private val database: AppDatabase) {
      * Get local transaction records and save to the database.
      * @param db The database.
      */
-    private suspend fun storeInitTransactions(db: AppDatabase) {
+    private suspend fun storeInitTransactions() {
         // init transaction records data
         val _transactionRecords = mutableListOf(
             TransactionRecord("18 Apr 2024", 42.15,
@@ -96,24 +96,24 @@ class AppDataManager(private val database: AppDatabase) {
         _transactionRecords.forEach { t ->
             var category = Category()
             val getJob = GlobalScope.launch {
-                category = db.categoryDao().getCategoryByName(t.category?.name!!)
-                // category = getCategoryFromDatabase(t.category?.name!!, database)
+                category = database.categoryDao().getCategoryByName(t.category?.name!!)
             }
             getJob.join()
-            // Log.i("Mgr-GetCatByName", "catName -> ${category.name}")
             t.category = category
         }
 
         val saveJob = GlobalScope.launch {
-            saveTransactionRecordsToDatabase(
-                database = database,
-                data =_transactionRecords)
+            saveTransactionRecordsToDatabase(_transactionRecords)
         }
         saveJob.join()
         Log.i("Mgr-StoreTransactions", "$_transactionRecords")
     }
 
     // on click actions
+    /**
+     * Get all categories from a database.
+     * @return All categories.
+     */
     suspend fun getAllCategories(): List<Category> {
         var catList = listOf<Category>()
 
@@ -210,13 +210,11 @@ class AppDataManager(private val database: AppDatabase) {
     }
 
     // Dao implementations
-    private suspend fun saveCategoriesToDatabase(database: AppDatabase,
-                                           data: List<Category>
+    private suspend fun saveCategoriesToDatabase(data: List<Category>
     ) {
         database.categoryDao().insertAllCategories(data)
     }
-    private suspend fun saveTransactionRecordsToDatabase(database: AppDatabase,
-                                           data: List<TransactionRecord>
+    private suspend fun saveTransactionRecordsToDatabase(data: List<TransactionRecord>
     ) {
         database.transactionRecordDao().insertAllTransactionRecords(data)
     }
