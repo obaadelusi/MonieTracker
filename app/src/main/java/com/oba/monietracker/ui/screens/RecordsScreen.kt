@@ -1,6 +1,7 @@
 package com.oba.monietracker.ui.screens
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,6 +42,8 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 import com.oba.monietracker.R
 import com.oba.monietracker.data.db.AppDataManager
 import com.oba.monietracker.data.models.TransactionRecord
@@ -84,6 +87,13 @@ fun RecordsScreen(
             Instant.ofEpochMilli(it).atOffset(ZoneOffset.UTC)
             //Instant.ofEpochMilli(it).atZone(ZoneId.systemDefault()).toLocalDate()
         )
+    }
+
+    val currentUser = Firebase.auth.currentUser
+    currentUser.let {
+        Toast.makeText(context,
+            "Welcome back ${currentUser?.displayName}!",
+            Toast.LENGTH_LONG)
     }
 
     Column(

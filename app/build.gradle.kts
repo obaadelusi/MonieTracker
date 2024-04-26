@@ -4,6 +4,7 @@ plugins {
 
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -89,43 +90,10 @@ dependencies {
     implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
     implementation("com.squareup.retrofit2:converter-moshi:$retrofit_version")
 
-    // month picker dialog
-    //implementation(libs.monthpickerdialog)
-
-
-//    // compose
-//    implementation(libs.coil.compose)
-//    implementation(libs.androidx.lifecycle.viewmodel.compose)
-//    implementation(libs.ui.tooling.preview)
-//
-//    // gson for converting object to json
-//    implementation(libs.gson)
-//
-//    // retro fit
-//    implementation (libs.retrofit)
-//    implementation (libs.converter.gson)
-//
-//    // room
-//    val room_version = "2.6.1"
-//
-//    implementation(libs.androidx.room.runtime)
-//    implementation(libs.androidx.room.ktx)
-//
-//    // To use Kotlin annotation processing tool (kapt)
-//    kapt("androidx.room:room-compiler:$room_version")
-//
-//    // implementation("androidx.room:room-runtime:$room_version")
-//    // kapt("androidx.room:room-compiler:$room_version")
-//    // implementation("androidx.room:room-ktx:$room_version")
-//
-//    // hilt dagger
-//    val hilt_version = "2.43.2"
-//    implementation ("com.google.dagger:hilt-android:$hilt_version")
-//    annotationProcessor ("com.google.dagger:hilt-compiler:$hilt_version")
-//
-//    // moshi
-//    implementation(libs.moshi.kotlin)
-//    implementation(libs.converter.moshi)
+    // firebase auth
+    implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
+    implementation("com.google.firebase:firebase-auth")
+//    implementation(libs.firebase.auth.ktx)
 
     // default libraries
     implementation(libs.androidx.core.ktx)

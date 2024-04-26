@@ -18,27 +18,26 @@
         <activity
             android:name=".ui.activities.SignInActivity"
             android:exported="true"
-            android:label="Monie Tracker"
+            android:label="MonieTracker"
             android:theme="@style/Theme.MonieTracker">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <activity
             android:name=".ui.activities.SignUpActivity"
             android:exported="false"
-            android:label="Monie Tracker"
+            android:label="MonieTracker"
             android:theme="@style/Theme.MonieTracker">
         </activity>
 
         <activity
             android:name=".MainActivity"
-            android:exported="true"
-            android:label="Monie Tracker"
+            android:exported="false"
+            android:label="MonieTracker"
             android:theme="@style/Theme.MonieTracker">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 

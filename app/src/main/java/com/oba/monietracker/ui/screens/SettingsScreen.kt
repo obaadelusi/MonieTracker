@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.google.firebase.auth.FirebaseAuth
 import com.oba.monietracker.Destination
 import com.oba.monietracker.R
 import com.oba.monietracker.ui.activities.SignInActivity
@@ -249,6 +250,7 @@ fun SettingsScreen(
 
             Button(
                 onClick = {
+                    FirebaseAuth.getInstance().signOut()
                     val intent = Intent(context, SignInActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     context.startActivity(intent)

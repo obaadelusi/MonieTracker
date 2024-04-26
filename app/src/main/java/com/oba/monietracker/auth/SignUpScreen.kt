@@ -27,8 +27,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.SoftwareKeyboardController
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -41,7 +39,6 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.oba.monietracker.MainActivity
 import com.oba.monietracker.R
 import com.oba.monietracker.ui.activities.SignInActivity
 
@@ -52,15 +49,14 @@ import com.oba.monietracker.ui.activities.SignInActivity
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SignUpScreen(
-    context: Context
+    context: Context,
+    performSignUp: (name: String, email: String, pass: String) -> Unit
 ) {
     var name by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
-    var loading by remember { mutableStateOf(false) }
-    var error by remember { mutableStateOf<String?>(null) }
-    val keyboardController = LocalSoftwareKeyboardController.current
+    var error by remember { mutableStateOf<String>("") }
 
     Column(
         modifier = Modifier
@@ -74,14 +70,14 @@ fun SignUpScreen(
                 text = "Monie",
                 Modifier.padding(bottom = 24.dp),
                 fontWeight = FontWeight.Bold,
-                fontSize = TextUnit(10f, TextUnitType.Em),
+                fontSize = TextUnit(8f, TextUnitType.Em),
                 color = Color.Black,
             )
             Text(
                 text = "Tracker",
                 Modifier.padding(bottom = 24.dp),
                 fontWeight = FontWeight.Bold,
-                fontSize = TextUnit(10f, TextUnitType.Em),
+                fontSize = TextUnit(8f, TextUnitType.Em),
                 color = colorResource(R.color.green)
             )
         }
@@ -101,7 +97,7 @@ fun SignUpScreen(
             label = { Text("Name") },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done
+                imeAction = ImeAction.Next
             ),
         )
 
@@ -114,7 +110,7 @@ fun SignUpScreen(
             label = { Text("Email") },
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Done
+                imeAction = ImeAction.Next
             ),
         )
 
@@ -128,7 +124,7 @@ fun SignUpScreen(
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
+                imeAction = ImeAction.Next
             ),
         )
 
@@ -140,7 +136,7 @@ fun SignUpScreen(
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
-                imeAction = ImeAction.Done
+                imeAction = ImeAction.Next
             ),
             keyboardActions = KeyboardActions(
                 onDone = {
@@ -156,9 +152,9 @@ fun SignUpScreen(
             )
         )
 
-        if (error != null) {
+        if (error.isNotEmpty()) {
             Text(
-                text = error!!,
+                text = error,
                 color = Color.Red,
                 modifier = Modifier.padding(8.dp)
             )
@@ -166,8 +162,22 @@ fun SignUpScreen(
 
         Button(
             onClick = {
-                // Perform Firebase authentication
-                performSignUp(email, password, context, keyboardController)
+                // validate user input
+                if(name.isBlank()) {
+                    error = "Please enter your name"
+                }
+                else if (email.isBlank()) {
+                    error = "Please enter your email"
+                } else if (password.isBlank()) {
+                    error = "Please enter your password"
+                } else if (password != confirmPassword) {
+                    error = "Passwords do not match"
+                }
+                else {
+                    // Perform Firebase authentication
+                    performSignUp(name, email, password)
+                    //performSignUp(name, email, password, context, keyboardController)
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -197,45 +207,4 @@ fun SignUpScreen(
             }
         }
     }
-}
-
-/**
- * Implements the FirebaseAuth sign up process.
- * @param email The email of the user.
- * @param password The password of the user.
- * @param context The application context.
- * @param keyboardController The keyboard control options.
- */
-@OptIn(ExperimentalComposeUiApi::class)
-private fun performSignUp(
-    email: String,
-    password: String,
-    context: Context,
-    keyboardController: SoftwareKeyboardController?
-) {
-
-    val intent = Intent(context, MainActivity::class.java)
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    context.startActivity(intent)
-
-   // val auth = FirebaseAuth.getInstance()
-
-//    auth.signInWithEmailAndPassword(email, password)
-//        .addOnCompleteListener { task ->
-//            if (task.isSuccessful) {
-//                // Sign in success, navigate to the next screen or perform desired action
-//                Toast.makeText(context, "Sign in successful", Toast.LENGTH_SHORT).show()
-//                val intent = Intent(context, MainActivity::class.java)
-//                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-//                intent.putExtra("userID", FirebaseAuth.getInstance().currentUser?.email)
-//                context.startActivity(intent)
-//
-//            } else {
-//                // If sign in fails, display a message to the user.
-//                Toast.makeText(context, "Authentication failed.", Toast.LENGTH_SHORT).show()
-//            }
-//
-//            //loading = false
-//            keyboardController?.hide()
-//        }
 }

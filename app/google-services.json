@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "348012407956",
+    "project_id": "monietracker",
+    "storage_bucket": "monietracker.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:348012407956:android:9d8b523548ea95765dd881",
+        "android_client_info": {
+          "package_name": "com.oba.monietracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDnwgWnypqJUQM6vnp_xl7TCXAk6BHtosY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

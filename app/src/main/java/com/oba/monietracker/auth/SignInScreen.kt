@@ -4,6 +4,7 @@ package com.oba.monietracker.auth
 // import com.google.firebase.auth.FirebaseAuth
 import android.content.Context
 import android.content.Intent
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -42,6 +43,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.firebase.auth.FirebaseAuth
 import com.oba.monietracker.MainActivity
 import com.oba.monietracker.R
 import com.oba.monietracker.ui.activities.SignUpActivity
@@ -59,8 +61,8 @@ fun SignInScreen(
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var loading by remember { mutableStateOf(false) }
-    val error by remember { mutableStateOf<String?>(null) }
+    //var loading by remember { mutableStateOf(false) }
+    var error by remember { mutableStateOf<String>("") }
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Column(
@@ -75,14 +77,14 @@ fun SignInScreen(
                 text = "Monie",
                 modifier = Modifier.padding(bottom = 24.dp),
                 fontWeight = FontWeight.Bold,
-                fontSize = TextUnit(10f, TextUnitType.Em),
+                fontSize = TextUnit(8f, TextUnitType.Em),
                 color = Color.Black,
             )
             Text(
                 text = "Tracker",
                 modifier = Modifier.padding(bottom = 24.dp),
                 fontWeight = FontWeight.Bold,
-                fontSize = TextUnit(10f, TextUnitType.Em),
+                fontSize = TextUnit(8f, TextUnitType.Em),
                 color = colorResource(R.color.green)
             )
         }
@@ -93,9 +95,9 @@ fun SignInScreen(
                 .align(Alignment.CenterHorizontally),
             style = MaterialTheme.typography.headlineLarge)
 
+        // if mobile supports biometric sign in
         if(canAuthenticate()) {
             Button(onClick = {
-                // check if mobile supports biometric sign in
                 authenticateUser()
             }) {
                 Text(text = "BIOMETRIC SIGN IN", Modifier.padding(end = 12.dp))
@@ -127,18 +129,25 @@ fun SignInScreen(
                 imeAction = ImeAction.Done)
         )
 
-        if (error != null) {
+        if (error.isNotBlank()) {
             Text(
-                text = error!!,
+                text = error,
                 color = Color.Red,
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier.padding(vertical = 8.dp)
             )
         }
 
         OutlinedButton(
             onClick = {
-                // Perform Firebase authentication
-                performSignIn(email, password, context, keyboardController)
+                // validate inputs
+                if (email.isBlank()) {
+                    error = "Please enter an email"
+                } else if (password.isBlank()) {
+                    error = "Please enter your password"
+                } else {
+                    // Perform Firebase authentication
+                    performSignIn(email, password, context, keyboardController)
+                }
             },
             modifier = Modifier
                 .fillMaxWidth()
@@ -183,30 +192,25 @@ private fun performSignIn(
     context: Context,
     keyboardController: SoftwareKeyboardController?
 ) {
+    val auth = FirebaseAuth.getInstance()
 
-    val intent = Intent(context, MainActivity::class.java)
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    context.startActivity(intent)
+    auth.signInWithEmailAndPassword(email, password)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                // Sign in success, navigate to the next screen or perform desired action
+                Toast.makeText(context, "Sign in successful", Toast.LENGTH_SHORT).show()
+                val intent = Intent(context, MainActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                intent.putExtra("userEmail", FirebaseAuth.getInstance().currentUser?.email)
+                context.startActivity(intent)
 
-   // val auth = FirebaseAuth.getInstance()
+            } else {
+                // If sign in fails, display a message to the user.
+                Toast.makeText(context, "Authentication failed.", Toast.LENGTH_SHORT).show()
+            }
 
-//    auth.signInWithEmailAndPassword(email, password)
-//        .addOnCompleteListener { task ->
-//            if (task.isSuccessful) {
-//                // Sign in success, navigate to the next screen or perform desired action
-//                Toast.makeText(context, "Sign in successful", Toast.LENGTH_SHORT).show()
-//                val intent = Intent(context, MainActivity::class.java)
-//                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-//                intent.putExtra("userID", FirebaseAuth.getInstance().currentUser?.email)
-//                context.startActivity(intent)
-//
-//            } else {
-//                // If sign in fails, display a message to the user.
-//                Toast.makeText(context, "Authentication failed.", Toast.LENGTH_SHORT).show()
-//            }
-//
-//            //loading = false
-//            keyboardController?.hide()
-//        }
+            //loading = false
+            keyboardController?.hide()
+        }
 }
 

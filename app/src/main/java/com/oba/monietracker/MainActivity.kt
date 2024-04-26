@@ -2,33 +2,46 @@ package com.oba.monietracker
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.auth
 import com.oba.monietracker.data.db.AppDataManager
 import com.oba.monietracker.data.db.AppDatabase
 import com.oba.monietracker.ui.components.BottomNavBar
@@ -52,7 +65,14 @@ sealed class Destination(val route: String, val title: String) {
     data object Account: Destination("account", "My Account")
 }
 
+/***
+ * The app main activity.
+ */
 class MainActivity : ComponentActivity() {
+
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var auth: FirebaseAuth
+
     @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,7 +84,8 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     // initialize cloud fireStore
-                    // val fs_db = Firebase.firestore
+                    auth = Firebase.auth
+                    val currentUser = auth.currentUser
 
                     val navController = rememberNavController()
                     val context = LocalContext.current
@@ -73,10 +94,9 @@ class MainActivity : ComponentActivity() {
                     val appDataManager = AppDataManager(database)
 
                     MainScaffold(
-                        navController,
                         context,
-                        appDataManager
-                        //, fs_db
+                        navController,
+                        appDataManager,
                     )
                 }
             }
@@ -84,15 +104,57 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScaffold(
-    navHostController: NavHostController,
     context: Context,
-    appDataManager: AppDataManager
+    navHostController: NavHostController,
+    appDataManager: AppDataManager,
 ) {
     Scaffold(
         bottomBar = {
             BottomNavBar(navController = navHostController)
+        },
+        topBar = {
+            TopAppBar(
+                title = {
+                    Row(
+                    modifier = Modifier
+                        .padding(top = 40.dp)
+                ) {
+                    Text(
+                        text = "Monie",
+                        Modifier
+                            .padding(bottom = 30.dp),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 5.em,
+                        color = Color.Black,
+                    )
+                    Text(
+                        text = "Tracker",
+                        Modifier
+                            .padding(bottom = 30.dp),
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 5.em,
+                        color = colorResource(R.color.green)
+                    )
+                } },
+                navigationIcon = {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_money),
+                        contentDescription = "logo")
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = colorResource(R.color.green_100)
+                ),
+                actions = {
+                    IconButton(
+                        onClick = { navHostController.navigate(Destination.Account.route) }
+                    ) {
+                        Icon(Icons.Default.AccountCircle, "user account", tint = Color.Black)
+                    }
+                }
+            )
         },
         floatingActionButton = {
             val navBackStackEntry by navHostController.currentBackStackEntryAsState()
@@ -102,6 +164,11 @@ fun MainScaffold(
                     FloatingActionButton(
                         onClick = {
                             /* TODO: Get receipt image from gallery */
+                                  Toast
+                                      .makeText(context,
+                                          "Receipt feature coming soon...",
+                                          Toast.LENGTH_LONG)
+                                      .show()
                         },
                         containerColor = colorResource(R.color.black),
                         contentColor = colorResource(R.color.white),

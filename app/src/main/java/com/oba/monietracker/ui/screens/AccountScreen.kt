@@ -1,6 +1,8 @@
 package com.oba.monietracker.ui.screens
 
 import android.content.Intent
+import android.content.SharedPreferences
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -34,6 +36,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.google.firebase.auth.FirebaseAuth
 import com.oba.monietracker.Destination
 import com.oba.monietracker.R
 import com.oba.monietracker.ui.activities.SignInActivity
@@ -50,12 +53,10 @@ fun AccountScreen(
 ) {
     val context = LocalContext.current
 
+    lateinit var sharedPreferences: SharedPreferences
+
     // User object will be gotten from Firebase Authentication
-    val user = object {
-        val name = "Oba"
-        val email = "oba@gmail.com"
-        val lastLogin = "April 4, 2024 11:59AM"
-    }
+    val user = FirebaseAuth.getInstance().currentUser
 
     Column(
         Modifier
@@ -77,10 +78,13 @@ fun AccountScreen(
         }
 
         Text(
-            text = "Hello ${user.name},",
+            text = "Hello ${user?.displayName?: user?.email?.split("@")?.first()},",
             style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(top = 16.dp, bottom = 8.dp, start = 8.dp)
         )
+
+        Log.d(">AccountScreen", "Email: ${user?.email}")
+        Log.d(">AccountScreen", "Display name: ${user?.displayName}")
 
         Card (
             shape = RectangleShape,
@@ -93,14 +97,14 @@ fun AccountScreen(
                 .padding(0.dp, 2.dp)
         ) {
             Text(
-                text = "Email address: ${user.email}",
+                text = "Email address: ${user?.email?: "Not logged in"}",
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(8.dp)
             )
 
             Text(
-                text = "Last login: ${user.lastLogin}",
+                text = "Verified: ${user?.isEmailVerified }",
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Medium,
                 modifier = Modifier.padding(8.dp, 4.dp)
@@ -111,6 +115,8 @@ fun AccountScreen(
 
         Button(
             onClick = {
+                FirebaseAuth.getInstance().signOut()
+
                 val intent = Intent(context, SignInActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 context.startActivity(intent)

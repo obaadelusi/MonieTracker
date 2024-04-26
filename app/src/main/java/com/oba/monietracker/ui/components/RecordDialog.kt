@@ -3,7 +3,7 @@ package com.oba.monietracker.ui.components
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,9 +14,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
@@ -31,6 +33,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -59,6 +62,7 @@ import com.oba.monietracker.R
 import com.oba.monietracker.data.db.AppDataManager
 import com.oba.monietracker.data.models.Category
 import com.oba.monietracker.data.models.TransactionRecord
+import com.oba.monietracker.ui.theme.Crimson
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.time.Instant
@@ -119,16 +123,28 @@ fun RecordDialog(
                 .background(Color.White)
                 .verticalScroll(rememberScrollState())
         ) {
-            Box(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(colorResource(R.color.green_100))
+                    .padding(horizontal = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Absolute.SpaceBetween
             ) {
                 Text(text = "Edit transaction",
                     color = Color.Black,
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Medium,
-                    modifier = Modifier.padding(vertical = 16.dp, horizontal = 8.dp))
+                    modifier = Modifier.padding(vertical = 16.dp))
+                OutlinedIconButton(
+                    onClick = { onDismissRequest() },
+                    border= BorderStroke(2.dp, Crimson),
+                    shape = CircleShape
+                ) {
+                    Icon(Icons.Default.Close,
+                        "close edit dialog",
+                        tint = Crimson)
+                }
             }
 
             // Type

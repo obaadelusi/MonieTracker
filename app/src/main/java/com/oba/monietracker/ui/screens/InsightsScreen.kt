@@ -297,7 +297,7 @@ fun InsightsScreen(
         var prevMonth1 by remember { mutableStateOf("") }
         var prevMonth2 by remember { mutableStateOf("") }
         for(index in months.indices) {
-            Log.d("Screen", "Element at index: " + months.elementAt(index))
+            //Log.d("Screen", "Element at index: " + months.elementAt(index))
             if (index > 1 && months.elementAt(index) == thisMonth) {
                 prevMonth1 = months.elementAt(index-1) + " $year"
                 prevMonth2 = months.elementAt(index-2) + " $year"
