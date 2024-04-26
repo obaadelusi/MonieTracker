@@ -421,8 +421,6 @@ fun InsightsScreen(
                 }
 
                 Spacer(modifier = Modifier.height(60.dp))
-
-                Text("Bar Chart", style = MaterialTheme.typography.headlineLarge)
             }
         }
     }
